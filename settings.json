@@ -1,0 +1,7 @@
+{
+    "prefix": ".",
+    "embed_color": 923430,
+    "memory_size": 5,
+    "default_volume": 0.02,
+    "buffer_size": 20
+}
