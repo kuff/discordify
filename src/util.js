@@ -46,35 +46,6 @@ module.exports = {
         return output.substring(0, output.length - 1);
     },
 
-    getById: (id, message) => {
-        yt = new YouTube();
-        yt.setKey(youtube_api_key);
-        return new Promise((resolve, reject) => {
-            yt.getById(id, (error, result) => {
-                if (error) {
-                    console.log(error);
-                    return reject(error);
-                }
-                else {
-                    if (result.items.length == 0) {
-                        return resolve(undefined);
-                    }
-                    return resolve({
-                        link: `https://www.youtube.com/watch?v=${id}`,
-                        id: result.items[0].id,
-                        message: message,
-                        title: result.items[0].snippet.title,
-                        artist: result.items[0].snippet.channelTitle,
-                        thumbnail: result.items[0].snippet.thumbnails.default.url,
-                        plays: result.items[0].statistics.viewCount,
-                        duration: result.items[0].contentDetails.duration,
-                        yt: yt
-                    });
-                }
-            });
-        })
-    },
-
     shuffle: deck => {
         if (!Array.isArray(deck))
             throw new Error("Parameter Must Be An Array");

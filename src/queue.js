@@ -33,12 +33,14 @@ module.exports = class Queue {
         let song = this.queue.shift();
         const prev = this.history.pop()
 
-        if (prev && prev.flags) {
-            if (prev.flags.indexOf('loop') != -1 && !skipped) {
+        if (prev) {
+            if (prev.flags && prev.flags.indexOf('loop') != -1 && 
+            !skipped) {
                 this.queue.unshift(song);
                 song = prev;
             }
-            else if (!song && prev.flags.indexOf('autoplay') != -1) {
+            else if (!song && prev.flags && 
+            prev.flags.indexOf('autoplay') != -1) {
                 song = prev.related(this.history);
                 song.flags = [ 'autoplay' ];
             }
@@ -47,17 +49,17 @@ module.exports = class Queue {
             }
         }
 
-        if (song) {
+        if (song && !(this.peek(this.history) === song)) {
             if (this.history.length == memory_size) this.history.shift();
             this.history.push(song);
-            let result = Object.assign({}, song);
-            delete result.flags;
-            return result
         }
         return song;
     }
 
-    peek() {
+    peek(list = this.queue) {
+        if (list === this.history) {
+            return this.history[this.history.length - 1]
+        }
         return this.queue[0];
     }
 

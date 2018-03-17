@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/bot.js",
     "test": "jest",
-    "watch": "jest --watch"
+    "watch": "jest --watch -o"
   },
   "keywords": [],
   "author": "",
