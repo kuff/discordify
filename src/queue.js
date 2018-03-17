@@ -9,24 +9,23 @@ module.exports = class Queue {
     }
 
     enqueue(song, args) {
-        if (Array.isArray(song)) {
-            for (let i = 0; i < song.length; i++) {
-                song[i].flags = args;
-            }
-            if (args && args.indexOf('shuffle') != -1) {
+        if (!Array.isArray(song)) song = [song];
+
+        for (let i = 0; i < song.length; i++) {
+            song[i].flags = args;
+        }
+
+        if (args) {
+            if (args.indexOf('shuffle') != -1)
                 song = shuffle(song);
-                song.reduce((prev, val) => {
-                    val.flags.splice(val.flags.indexOf('shuffle'), 1)
-                    prev.push(val);
-                    return prev;
-                }, []);
+            if (args.indexOf('now') != -1) {
+                this.queue.forEach(elem => song.push(elem));
+                this.queue = song.slice();
+                return;
             }
-            song.forEach(elem => this.queue.push(elem))
         }
-        else {
-            song.flags = args;
-            this.queue.push(song);
-        }
+
+        song.forEach(elem => this.queue.push(elem));
     }
 
     dequeue(skipped) {
@@ -69,7 +68,6 @@ module.exports = class Queue {
 
     clear() {
         this.queue = [];
-        this.history = [];
     }
 
 }
