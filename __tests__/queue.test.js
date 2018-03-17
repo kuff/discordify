@@ -30,39 +30,72 @@ it('Enqueues Without Flags', () => {
     .toBe(  4);
 });
 
-it('Dequeues Without Flags', () => {
+it('Dequeues And Manages History Correctly', () => {
     expect(   queue.queue)
         .toEqual([{ song: 'a song' },
             { song: 'another song' },
             { this: 'must be an object' },
             { but: 'what it', contains: 'doesn\'t matter' }]);
+    expect(queue.history.length)
+        .toEqual(0);
     let item = queue.dequeue();
     expect(   item)
         .toEqual({ song: 'a song' });
     expect(   item)
-        .not.toHaveProperty('flags');
+        .toHaveProperty('flags');
+    expect(queue.history)
+        .toEqual([{ song: 'a song', flags: undefined }]);
 
     item = queue.dequeue();
     expect(   item)
-        .toEqual({ song: 'another song' });
-    expect(item)
-        .not.toHaveProperty('flags');
+        .toEqual({ song: 'another song', flags: undefined });
+    expect(queue.history)
+        .toEqual([{ song: 'a song', flags: undefined },
+            { song: 'another song', flags: undefined }]
+        );
 
     item = queue.dequeue();
     expect(   item)
-        .toEqual({ this: 'must be an object' });
-    expect(   item)
-        .not.toHaveProperty('flags');
+        .toEqual({ this: 'must be an object', flags: undefined });
+    expect(queue.history)
+        .toEqual([{ song: 'a song', flags: undefined },
+            { song: 'another song', flags: undefined },
+            { this: 'must be an object', flags: undefined }]
+        );
 
     item = queue.dequeue();
     expect(   item)
-        .toEqual({ but: 'what it', contains: 'doesn\'t matter' });
-    expect(   item)
-        .not.toHaveProperty('flags');
+        .toEqual({ but: 'what it', contains: 'doesn\'t matter', 
+            flags: undefined });
+    expect(queue.history)
+        .toEqual([{ song: 'a song', flags: undefined },
+            { song: 'another song', flags: undefined },
+            { this: 'must be an object', flags: undefined },
+            { but: 'what it', contains: 'doesn\'t matter',
+                flags: undefined }]
+        );
 
     item = queue.dequeue();
     expect(   item)
         .toEqual(undefined);
+    expect(queue.history)
+        .toEqual([{ song: 'a song', flags: undefined },
+            { song: 'another song', flags: undefined },
+            { this: 'must be an object', flags: undefined },
+            { but: 'what it', contains: 'doesn\'t matter',
+                flags: undefined }]
+        );
+    queue.enqueue([{ one: 'song' }, { two: 'also song' }]);
+    queue.dequeue();
+    queue.dequeue();
+    expect(queue.history)
+        .toEqual([{ song: 'another song', flags: undefined },
+            { this: 'must be an object', flags: undefined },
+            { but: 'what it', contains: 'doesn\'t matter',
+                flags: undefined },
+            { one: 'song', flags: undefined },
+            { two: 'also song', flags: undefined }]
+        );
 });
 
 it('Enqueues Single Song With Loop Flag', () => {
@@ -71,7 +104,7 @@ it('Enqueues Single Song With Loop Flag', () => {
         .toEqual({ song: 'a song', flags: [ 'loop' ]});
 });
 
-it('Enqueues Multiple Songs Multiple Flags', () => {
+it('Enqueues Multiple Songs With Multiple Flags', () => {
     queue.enqueue([
         { song: 'another song' },
         { this: 'must be an object', related: function (history) {
@@ -84,7 +117,7 @@ it('Enqueues Multiple Songs Multiple Flags', () => {
     ], [ 'loop', 'autoplay' ]);
     expect(queue.queue[1])
         .toEqual({ song: 'another song', 
-        flags: ['loop', 'autoplay'] });
+            flags: ['loop', 'autoplay'] });
     expect(queue.queue[2])
         .toHaveProperty('this', 'must be an object');
     expect(queue.queue[2])
@@ -94,28 +127,68 @@ it('Enqueues Multiple Songs Multiple Flags', () => {
 });
 
 it('Dequeues By Looping', () => {
+    const hist = queue.history;
+    expect(queue.history.length)
+        .toEqual(5);
     expect(queue.dequeue())
-        .toEqual({ song: 'a song' });
+        .toEqual({ song: 'a song', flags: ['loop'] });
+    expect(queue.history)
+        .toEqual(hist);
     expect(queue.dequeue())
-        .toEqual({ song: 'a song' });
-    expect(queue.dequeue())
-        .toEqual({ song: 'a song' });
+        .toEqual({ song: 'a song', flags: ['loop'] });
+    expect(queue.history)
+        .toEqual(hist);
     expect(queue.dequeue(true))
-        .toEqual({ song: 'another song' });
+        .toEqual({ song: 'another song', 
+            flags: ['loop', 'autoplay'] });
+    expect(queue.history[3])
+        .toEqual({ song: 'a song', flags: ['loop'] });
+    expect(queue.history[4])
+        .toEqual({ song: 'another song', 
+            flags: ['loop', 'autoplay'] }
+        );
     expect(queue.dequeue())
-        .toEqual({ song: 'another song' });
+        .toEqual({ song: 'another song', 
+            flags: ['loop', 'autoplay'] }
+        );
+    expect(queue.history[3])
+        .toEqual({ song: 'a song', flags: ['loop'] });
+    expect(queue.history[4])
+        .toEqual({ song: 'another song',
+            flags: ['loop', 'autoplay'] }
+        );
     let item = queue.dequeue(true)
     expect(item)
         .toHaveProperty('this', 'must be an object');
     expect(item)
         .toHaveProperty('related');
+    expect(item)
+        .toHaveProperty('flags', ['loop', 'autoplay'] );
+    expect(queue.history[2])
+        .toEqual({ song: 'a song', flags: ['loop'] });
+    expect(queue.history[3])
+        .toEqual({
+            song: 'another song',
+            flags: ['loop', 'autoplay']
+        }
+    );
+    expect(queue.history[4])
+        .toHaveProperty('this');
 });
 
 it('Autoplays After End Loop Without Looping', () => {
+    let hist = queue.history.slice();
     expect(queue.dequeue(true))
         .toHaveProperty('related');
-    expect(queue.dequeue()) // Now this shouldn't loop!
-        .toEqual({ autoplayed: 'true!' });
+    expect(queue.history)
+        .not.toEqual(hist);
+    hist = queue.history.slice();
+    expect(queue.dequeue()) // now this shouldn't loop!
+        .toEqual({ autoplayed: 'true!', 
+            flags: ['autoplay'] }
+        );
+    expect(queue.history)
+        .not.toEqual(hist);
 });
 
 it('Enqueues Songs Flagged With Autoplay', () => {
@@ -138,45 +211,40 @@ it('Enqueues Songs Flagged With Autoplay', () => {
         .toHaveProperty('flags', [ 'autoplay' ]);
 });
 
-it('Dequeues By Autoplay', () => {
+it('Dequeues By Autoplaying', () => {
     let item = queue.dequeue();
     expect(item)
-    .toEqual({ but: 'what it', contains: 'doesn\'t matter'});
-    expect(item)
-    .not.toHaveProperty('flags');
+        .toEqual({ but: 'what it', contains: 'doesn\'t matter',
+            flags: ['autoplay'] });
     
     item = queue.dequeue();
     expect(item)
-    .toHaveProperty('this', 'should however contain');
+        .toHaveProperty('this', 'should however contain');
     expect(item)
-    .toHaveProperty('related');
+        .toHaveProperty('related');
     expect(item)
-    .not.toHaveProperty('flags');
+        .toHaveProperty('flags', ['autoplay']);
     
     item = queue.dequeue(true); // User skip should not matter
     expect(item)
         .toHaveProperty('related');
     expect(item)
-        .not.toHaveProperty('flags');
+        .toHaveProperty('flags', ['autoplay']);
 
     item = queue.dequeue();
     expect(item)
-        .toEqual({ autoplayed: 'true!' });
-    expect(item)
-        .not.toHaveProperty('flags');
+        .toEqual({ autoplayed: 'true!', flags: ['autoplay'] });
 })
 
 it('Disengages Autoplay When New Songs Are Added To Queue', () => {
     queue.enqueue({ a: 'new song!' });
     expect(queue.dequeue())
-        .toEqual({ a: 'new song!' });
+        .toEqual({ a: 'new song!', flags: undefined });
     expect(queue.dequeue())
         .toEqual(undefined); // just to be sure
 });
 
 it('Songs Are Preserved When Flagged With "Shuffle"', () => {
-    // cannot be sure of this without running a thorough shuffling-
-    // test, which we will not do here.
     const input = [{ obj: 'hello' }, { obj: 'hello2' },
         { obj: 'hello3' }, { this: 'is an object' }];
     queue.enqueue(input, [ 'shuffle' ]);
@@ -225,7 +293,7 @@ it('Songs Are Randomly Shuffled When Flagged With "Shuffle"', () => {
         .toBe(true);
 });
 
-it('Peeks Correctly', () => {
+it('Peeks At Queue Correctly', () => {
     queue = new Queue();
     expect(queue.peek())
         .toEqual(undefined);
@@ -250,7 +318,23 @@ it('Peeks Correctly', () => {
 
 });
 
+it('Peeks At History Correctly', () => {
+    queue = new Queue();
+    expect(queue.peek(queue.history))
+        .toEqual(undefined);
+    queue.history.push({ an: 'object' });
+    expect(queue.peek(queue.history))
+        .toEqual({ an: 'object' });
+    queue.history.push({ another: 'object' });
+    expect(queue.peek(queue.history))
+        .toEqual({ another: 'object' });
+    queue.history = [1,2,3,4,5];
+    expect(queue.peek(queue.history))
+        .toEqual(5);
+});
+
 it('Clears Correctly', () => {
+    queue = new Queue();
     expect(queue.queue)
         .toEqual([]);
     expect(queue.history)

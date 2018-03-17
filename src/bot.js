@@ -76,6 +76,13 @@ client.on('message', message => {
         case 'end':
             // ...
             break;
+        
+        case 'reload':
+            q = new Queue();
+            f = new Fetcher();
+            pb = new Playback();
+            // ...
+            break;
             
     }
 });
