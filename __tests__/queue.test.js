@@ -6,36 +6,55 @@ it('Instantiates', () => {
     expect( Array.isArray(queue.queue));
 
     expect( queue.queue.length)
-    .toBe(  0);
+    .toEqual(  0);
 
     expect( Array.isArray(queue.history));
 
     expect( queue.history.length)
-    .toBe(  0);
+    .toEqual(  0);
 });
 
-it('Enqueues Without Flags', () => {
-    queue.enqueue({song: 'a song'});
+it('Enqueues Single Element Lists The Same As Single Elements', 
+    () => {
+        queue.enqueue({ song: 'a song' });
+        const prev = Array.from(queue.queue);
+        queue = new Queue();
+        queue.enqueue([{ song: 'a song' }]); // <- wrapped in list
+        expect(queue.queue)
+            .toEqual(prev);
+    })
 
-    expect( queue.queue.length)
-    .toBe(  1);
+it('Enqueues With No Flags Provided With No Flags Provided', () => {
+    queue = new Queue();
+    queue.enqueue({ song: 'a song' });
+
+    expect(queue.queue)
+        .toEqual([{ song: 'a song', flags: undefined }]);
 
     queue.enqueue([
-        {song: 'another song'},
-        {this: 'must be an object'},
-        {but: 'what it', contains: 'doesn\'t matter'}
+        { song: 'another song' },
+        { this: 'must be an object' },
+        { but: 'what it', contains: 'doesn\'t matter' }
     ]);
 
-    expect( queue.queue.length)
-    .toBe(  4);
+    expect(queue.queue)
+        .toEqual([
+            { song: 'a song', flags: undefined },
+            { song: 'another song', flags: undefined },
+            { this: 'must be an object', flags: undefined },
+            { but: 'what it', contains: 'doesn\'t matter'
+                , flags: undefined },
+        ]);
 });
 
 it('Dequeues And Manages History Correctly', () => {
-    expect(   queue.queue)
-        .toEqual([{ song: 'a song' },
+    expect(queue.queue)
+        .toEqual([
+            { song: 'a song' },
             { song: 'another song' },
             { this: 'must be an object' },
-            { but: 'what it', contains: 'doesn\'t matter' }]);
+            { but: 'what it', contains: 'doesn\'t matter' }
+        ]);
     expect(queue.history.length)
         .toEqual(0);
     let item = queue.dequeue();
@@ -244,20 +263,24 @@ it('Disengages Autoplay When New Songs Are Added To Queue', () => {
         .toEqual(undefined); // just to be sure
 });
 
-it('Songs Are Preserved When Flagged With "Shuffle"', () => {
+it('Preserves Songs When Enqueued With "Shuffle"', () => {
     const input = [{ obj: 'hello' }, { obj: 'hello2' },
         { obj: 'hello3' }, { this: 'is an object' }];
     queue.enqueue(input, [ 'shuffle' ]);
     expect(queue.queue.length)
         .toEqual(input.length);
-    queue.queue.forEach(elem => delete elem.flags); // hacking...
+    input.forEach(elem => elem.flags = [ 'shuffle' ]);
     const set = new Set()
     queue.queue.forEach(elem => set.add(elem));
     expect(set.size)
         .toEqual(4);
+    input.forEach(elem => {
+        expect(queue.queue.indexOf(elem))
+            .not.toEqual(-1);
+    });
 });
 
-it('Songs Are Randomly Shuffled When Flagged With "Shuffle"', () => {
+it('Randomly Shuffles Songs When Enqueued With "Shuffle"', () => {
     const input = [{ obj: 'hello' }, { obj: 'hello2' },
         { obj: 'hello3' }, { this: 'is an object' }];
     const precision = 1000;
@@ -292,6 +315,55 @@ it('Songs Are Randomly Shuffled When Flagged With "Shuffle"', () => {
         deviation)
         .toBe(true);
 });
+
+it('Enqueues Songs Flagged With "Now" Correctly', () => {
+    queue = new Queue();
+    queue.enqueue({ song: 'a song'}, [ 'now' ]);
+    expect(queue.queue)
+        .toEqual([{ song: 'a song', flags: [ 'now' ] }]);
+    queue.enqueue({ song: 'another song'}, [ 'now' ]);
+    expect(queue.queue)
+        .toEqual([{ song: 'another song', flags: [ 'now' ] },
+            { song: 'a song', flags: [ 'now' ] }]
+        );
+    queue.enqueue([
+        { song: 'another song' },
+        { this: 'must be an object' },
+        { but: 'what it', contains: 'doesn\'t matter' }
+    ], [ 'now' ]);
+    expect(queue.queue)
+        .toEqual([
+            { song: 'another song', flags: [ 'now' ] },
+            { this: 'must be an object', flags: [ 'now' ] },
+            { but: 'what it', contains: 'doesn\'t matter', 
+                flags: [ 'now' ] },
+            { song: 'another song', flags: [ 'now' ] },
+            { song: 'a song', flags: [ 'now' ] }
+        ]);
+})
+
+it('Enqueues Songs Flagged With Both "Shuffle" And "Now" Correctly', 
+    () => {
+        const input = [
+            { song: 'a song' },
+            { song: 'another song' },
+            { this: 'must be an object' },
+            { but: 'what it', contains: 'doesn\'t matter' }
+        ];
+        queue = new Queue();
+        queue.enqueue(input, ['shuffle', 'now']);
+        expect(queue.queue.length)
+        .toEqual(4);
+        for(let i=0;i<4;i++) {
+            queue.queue[i].flags
+        }
+        expect(queue.queue)
+            .not.toEqual(input); // <- might fail, just run again!
+        for(let i=0;i<4;i++) {
+            expect(queue.queue.indexOf(input[i]))
+                .not.toEqual(-1);
+        }
+    });
 
 it('Peeks At Queue Correctly', () => {
     queue = new Queue();
@@ -337,8 +409,8 @@ it('Clears Correctly', () => {
     queue = new Queue();
     expect(queue.queue)
         .toEqual([]);
-    expect(queue.history)
-        .toEqual([]);
+    /*expect(queue.history)
+        .toEqual([]);*/
     queue.enqueue([
         { the: 'next song is pointless' },
         { the_previous: 'song is right' }
@@ -347,8 +419,8 @@ it('Clears Correctly', () => {
     queue.clear();
     expect(queue.queue)
         .toEqual([]);
-    expect(queue.history)
-        .toEqual([]);
+    /*expect(queue.history)
+        .toEqual([]);*/
 });
 
 it('Prints Correctly', () => {
