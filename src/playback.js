@@ -14,8 +14,8 @@ module.exports = class Playback {
         this.skipped = false;
     }
 
-    async play(song) {
-        let own = await message.reply('processing...');
+    play(song) {
+        //let own = await message.reply('processing...');
         // ...
     }
 
@@ -27,6 +27,10 @@ module.exports = class Playback {
         // ...
     }
 
+    remaining() {
+        // ...
+    }
+    
     skip(amount) {
         this.skipped = true;
         // ...
@@ -35,7 +39,7 @@ module.exports = class Playback {
     replay() {
         // ...
     }
-
+    
     jump(seconds, message) {
         if(this.song) {
             return this.play(
