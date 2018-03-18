@@ -1,6 +1,5 @@
 const { youtube_api_key } = require('../config.json');
 const { memory_size } = require('../settings.json');
-//const { getById } = require('./util.js');
 const Song = require('./song.js');
 const YouTube = require('youtube-node');
 const ytdl = require('ytdl-core');
@@ -31,6 +30,7 @@ const lib = {
                         return reject(error);
                     }
 
+                    if (!history) history = [];
                     history = history.map(elem => elem.id);
                     const remaining = result.items.reduce(
                         (prev, elem) => {
