@@ -57,6 +57,10 @@ client.on('message', message => {
         case 'resume':
             // ...
             break;
+        
+        case 'remaining':
+            // ...
+            break;
 
         case 'skip':
             // ...

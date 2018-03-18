@@ -12,7 +12,7 @@ it('Doesn\'t Error On Correct Id', done =>
     getById(id, {}).then((response, error) => {
         expect(error)
             .toBe(undefined);
-        result = response; // Results from normal run of util.getById
+        result = response; // Results from normal run of own getById
         yt.getById(id, (error, result) => {
             expect(error)
                 .toBe(null);
