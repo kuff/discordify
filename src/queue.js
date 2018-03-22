@@ -18,7 +18,7 @@ module.exports = class Queue {
         if (args) {
             if (args.indexOf('shuffle') != -1)
                 song = shuffle(song);
-            if (args.indexOf('now') != -1) {
+            if (args.indexOf('next') != -1) {
                 this.queue.forEach(elem => song.push(elem));
                 this.queue = song.slice();
                 return;
@@ -28,7 +28,7 @@ module.exports = class Queue {
         song.forEach(elem => this.queue.push(elem));
     }
 
-    dequeue(skipped) {
+    async dequeue(skipped) {
         let song = this.queue.shift();
         const prev = this.history.pop()
 
@@ -40,7 +40,7 @@ module.exports = class Queue {
             }
             else if (!song && prev.flags && 
             prev.flags.indexOf('autoplay') != -1) {
-                song = prev.related(this.history);
+                song = await prev.related(this.history);
                 song.flags = [ 'autoplay' ];
             }
             else {
