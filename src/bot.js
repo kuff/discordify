@@ -4,19 +4,19 @@ const { ping } = require('./util.js');
 const Playback = require('./playback.js');
 const Queue = require('./queue.js');
 const Fetcher = require('./fetch.js');
-const Discord = require('discord');
+const Discord = require('discord.js');
 
 const client = new Discord.Client();
 const q = new Queue();
 const f = new Fetcher(q);
-const pb = new Playback(client, q, f);
+const pb = new Playback(client, q);
 
 client.on('ready', () => 
     console.log("I am ready!")
     // Refer to help command when available...
 )
 
-client.on('message', message => {
+client.on('message', async message => {
 
     if (message.author.id === client.user.id) return;
 
@@ -40,16 +40,23 @@ client.on('message', message => {
             break;
 
         case 'ping':
+        case 'latency':
+        case 'measure':
             ping(client, message);
             break;
 
         case 'play':
         case 'song':
-        case 'p':
-            // ...
+        case 's':
+            const result = await f.get(args[0], args, message);
+            if (!result) return;
+            q.enqueue(result, args);
+            if (!pb.playing) return pb.play();
+            // return queued embed...
             break;
 
         case 'pause':
+        case 'p':
             // ...
             break;
 
@@ -59,6 +66,8 @@ client.on('message', message => {
             break;
         
         case 'remaining':
+        case 'next':
+        case 'queue':
             // ...
             break;
 
@@ -76,8 +85,8 @@ client.on('message', message => {
             // ...
             break;
             
-        case 'stop':
         case 'end':
+        case 'stop':
             // ...
             break;
         

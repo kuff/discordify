@@ -20,8 +20,7 @@ module.exports = class Queue {
                 song = shuffle(song);
             if (args.indexOf('next') != -1) {
                 this.queue.forEach(elem => song.push(elem));
-                this.queue = song.slice();
-                return;
+                this.clear();
             }
         }
 

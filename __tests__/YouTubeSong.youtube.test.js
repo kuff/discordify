@@ -23,15 +23,10 @@ function relatedRaw() {
     });
 }
 
-beforeAll(done => {
-    getById(id).then(result => {
-        input = result;
-        relatedRaw().then(resp => {
-            //console.log(resp); // <- for debugging!
-            ids = resp;
-            done()
-        });
-    });
+beforeAll(async done => {
+    input = await getById(id);
+    ids = await relatedRaw()
+    done()
 });
 
 it('Initializes', () => {
