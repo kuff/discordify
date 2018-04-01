@@ -1,12 +1,11 @@
 const { default_volume } = require('../settings.json');
-//const { playing, queued } = require('./embeds.js');
+//const { playing, queued, remaining } = require('./embeds.js');
 
 module.exports = class Playback {
     
-    constructor(client, queue, fetcher) {
+    constructor(client, queue) {
         this.client = client;
         this.queue = queue;
-        this.fetch = fetcher;
         this.playing = undefined; // should contain song when playing
         this.playback_start = undefined; // time since playback
         this.paused = undefined; // time since playback paused

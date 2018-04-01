@@ -42,8 +42,6 @@ it('Assigns Fields Correctly To Reponse Object', () => {
         .toEqual(raw.items[0].statistics.viewCount);
     expect(result.duration)
         .toEqual(raw.items[0].contentDetails.duration);
-    expect(typeof result.yt)
-        .toEqual(typeof yt);
 });
 
 it('Handles Invalid Ids With A Null Response', done =>
@@ -55,3 +53,17 @@ it('Handles Invalid Ids With A Null Response', done =>
         done();
     })
 );
+
+const list_of_ids = ['q6EoRBvdVPQ', '8YWl7tDGUPA', '6bnanI9jXps']
+
+it('Handles Multiple Ids', async done => {
+    const test = await getById(list_of_ids, {});
+    const ids = list_of_ids.join(',');
+    yt.getById(ids, (error, result) => {
+        expect(Array.isArray(test))
+            .toEqual(true);
+        expect(test.map(elem => elem.id))
+            .toEqual(result.items.map(elem => elem.id));
+        done();
+    });
+})

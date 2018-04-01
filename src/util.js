@@ -1,6 +1,5 @@
-const { youtube_api_key } = require('../config.json');
+//const { buffer_size } = require('../settings.json');
 const embeds = require('./embeds.js');
-const YouTube = require('youtube-node');
 
 module.exports = {
 
@@ -49,14 +48,6 @@ module.exports = {
     shuffle: deck => {
         if (!Array.isArray(deck))
             throw new Error("Parameter Must Be An Array");
-        /*return array.reduce((shuffled, x, i) => {
-            if(i == 0) shuffled = array;
-            const target = Math.floor(Math.random() * 
-                shuffled.length);
-            shuffled[i] = shuffled[target];
-            shuffled[target] = x;
-            return shuffled;
-        }, []);*/
         let randomizedDeck = [];
         let array = deck.slice();
         while (array.length !== 0) {
