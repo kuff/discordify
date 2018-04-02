@@ -1,7 +1,9 @@
 const version = require('../package.json').version;
 const { embed_color } = require('../settings.json');
+const { formatPlays, formatTime } = require('./util.js');
 
 module.exports = {
+
     ping: (client, roundtime) => {
         return {
             embed: {
@@ -28,5 +30,51 @@ module.exports = {
                 ]
             }
         }
+    },
+
+    playing: (song, next) => {
+        const embed = {
+            embed: {
+                title: song.title,
+                description: "by `" + song.artist + "`",
+                url: song.link,
+                color: embed_color,
+                footer: {
+                    icon_url: song.message.author.avatarURL,
+                    text: "Requested by " + song.message.author.username
+                },
+                thumbnail: {
+                    url: song.thumbnail
+                },
+                author: {
+                    name: "Now playing"
+                },
+                fields: [
+                    {
+                        name: "Plays",
+                        value: "`" + formatPlays(song.plays) + "`",
+                        inline: true
+                    },
+                    {
+                        name: "Duration",
+                        value: "`" + formatTime(song.duration) + "`",
+                        inline: true
+                    }
+                ]
+            }
+        };
+        if (next) {
+            embed.embed.fields[2] = {
+                name: "Up next",
+                value: "`" + next.title + "`" + 
+                    "by `" + next.artist + "`\n"
+            }
+        }
+        return embed;
+    },
+
+    queue: () => {
+        // ...
     }
+    
 }

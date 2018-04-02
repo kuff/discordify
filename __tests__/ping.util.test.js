@@ -7,17 +7,15 @@ const clientMock = {
 }
 
 const messageMock = {
-    reply: async message => {
-        return {
-            edit: embed => embed
-        }
+    send: async message => {
+        return messageMock;
     }
 }
 
 it('Works', async () => {
     const before = Date.now();
-    const result = await ping(clientMock, messageMock);
+    const result = await ping(messageMock);
     const diff = Date.now() - before;
-    expect(     result)
-    .toEqual(   embeds.ping(clientMock, diff));
+    expect(embeds.ping(clientMock, result))
+        .toEqual(embeds.ping(clientMock, diff));
 });

@@ -1,7 +1,9 @@
 const { token } = require('../config.json');
 const { prefix } = require('../settings.json');
 const { ping } = require('./util.js');
-const Playback = require('./playback.js');
+const embeds = require('./embeds.js');
+const Message = require('./message.js');
+const Player = require('./playback.js');
 const Queue = require('./queue.js');
 const Fetcher = require('./fetch.js');
 const Discord = require('discord.js');
@@ -9,7 +11,7 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 const q = new Queue();
 const f = new Fetcher(q);
-const pb = new Playback(client, q);
+const pb = new Player(client, q);
 
 client.on('ready', () => 
     console.log("I am ready!")
@@ -26,6 +28,7 @@ client.on('message', async message => {
     command = command.slice(prefix.length);
 
     // Figure out a way to catch flags...
+    message = new Message(message);
     
     if (p !== prefix) return;
 
@@ -42,16 +45,21 @@ client.on('message', async message => {
         case 'ping':
         case 'latency':
         case 'measure':
-            ping(client, message);
+            message.embed(embeds.ping(client, 
+                await ping(message)));
             break;
 
         case 'play':
         case 'song':
         case 's':
-            const result = await f.get(args[0], args, message);
+            const result = await f.get(args[0], message);
             if (!result) return;
             q.enqueue(result, args);
-            if (!pb.playing) return pb.play();
+            if (!pb.playing) {
+                const song = await q.dequeue();
+                pb.playing = song;
+                return message.embed(embeds.playing(song, q.peek()));
+            }
             // return queued embed...
             break;
 
@@ -77,6 +85,11 @@ client.on('message', async message => {
 
         case 'previous':
         case 'replay':
+            // ...
+            break;
+
+        case 'recent':
+        case 'history':
             // ...
             break;
 

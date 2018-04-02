@@ -1,6 +1,7 @@
 const { youtube_api_key } = require('../config.json');
 const { getById } = require('../src/youtube.js');
 const YouTube = require('youtube-node');
+const moment = require('moment');
 
 id = '5eZyspecXJE';
 yt = new YouTube();
@@ -41,7 +42,8 @@ it('Assigns Fields Correctly To Reponse Object', () => {
     expect(result.plays)
         .toEqual(raw.items[0].statistics.viewCount);
     expect(result.duration)
-        .toEqual(raw.items[0].contentDetails.duration);
+        .toEqual(moment.duration(
+            raw.items[0].contentDetails.duration).asSeconds());
 });
 
 it('Handles Invalid Ids With A Null Response', done =>

@@ -1,14 +1,13 @@
-//const { buffer_size } = require('../settings.json');
-const embeds = require('./embeds.js');
+
 
 module.exports = {
 
-    ping: async (client, message) => {
+    ping: async message => {
         const before = Date.now();
-        const own = await message.reply("pinging...");
-        const roundtime = Date.now() - before;
+        const own = await message.send("pinging...");
+        return Date.now() - before;
         // Return is only done for testing purposes
-        return own.edit(embeds.ping(client, roundtime));
+        // return own.edit(ping(client, roundtime));
     },
 
     formatTime: duration => {
@@ -23,7 +22,7 @@ module.exports = {
                 + seconds;
     },
 
-    formatViews: views => {
+    formatPlays: views => {
         if (views < 1000) return views.toString();
 
         const views_number = views;
