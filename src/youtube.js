@@ -4,6 +4,7 @@ const Song = require('./song.js');
 const YouTube = require('youtube-node');
 const ytdl = require('ytdl-core');
 const axios = require('axios');
+const moment = require('moment');
 
 yt = new YouTube();
 yt.setKey(youtube_api_key);
@@ -90,7 +91,9 @@ const lib = {
                         thumbnail: elem.snippet.thumbnails.default
                             .url,
                         plays: elem.statistics.viewCount,
-                        duration: elem.contentDetails.duration,
+                        duration: moment.duration(
+                            elem.contentDetails.duration)
+                            .asSeconds(),
                     })
                 );
                 if (output.length == 1) return resolve(output[0])
