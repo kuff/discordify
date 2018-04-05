@@ -13,10 +13,15 @@ const q = new Queue();
 const f = new Fetcher(q);
 const pb = new Player(client, q);
 
-client.on('ready', () => 
-    console.log("I am ready!")
-    // Refer to help command when available...
-)
+client.on('ready', () => {
+    console.log('I\'m ready!');
+    /*client.user.setPresence({ 
+        status: 'idle', 
+        game: { 
+            name: `nothing | ${prefix}help` 
+        }
+    })*/
+});
 
 client.on('message', async message => {
 
@@ -52,15 +57,24 @@ client.on('message', async message => {
         case 'play':
         case 'song':
         case 's':
-            const result = await f.get(args[0], message);
+            const result = await f.get(args, message);
             if (!result) return;
             q.enqueue(result, args);
-            if (!pb.playing) {
+            if (true || !pb.playing) {
                 const song = await q.dequeue();
+                /*client.user.setPresence({
+                    status: 'online',
+                    game: {
+                        name: `${song.title}\n
+                        by ${song.artist}\n
+                        suggested by ${song.message.author}`
+                    }
+                });*/
                 pb.playing = song;
-                return message.embed(embeds.playing(song, q.peek()));
+                return message.embed(embeds.playing(client, song,
+                    q));
             }
-            // return queued embed...
+            // return message.embed(embeds.queued(...);
             break;
 
         case 'pause':

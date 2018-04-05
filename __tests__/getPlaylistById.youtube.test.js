@@ -6,14 +6,16 @@ list_id = 'PLEQoAV22e4i1v8WG1ZzyW6Jmh-P7oaRBB';
 yt = new YouTube();
 yt.setKey(youtube_api_key);
 
+const messageMock = {
+    send: () => messageMock
+}
+
 it('Returns The Correct Number Of Unique Elements Without Erroring', 
 async done => {
     yt.getPlayListsItemsById(list_id, 1, async (error, result) => {
         expect(error)
             .toEqual(null);
-        const test = await getPlaylistById(list_id);
-        /*const test2 = test.map(elem => elem.title);
-        console.log(test2.sort());*/
+        const test = await getPlaylistById(list_id, messageMock);
         const set = new Set();
         test.forEach(elem => set.add(elem));
         expect(set.size)
@@ -26,7 +28,7 @@ async done => {
 
 it('Returns Undefined If Provided With Invalid Playlist Id', 
 async done => {
-    expect(await getPlaylistById('invalid-id'))
+    expect(await getPlaylistById('invalid-id', messageMock))
         .toEqual(undefined);
     done();
 });

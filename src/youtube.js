@@ -61,8 +61,8 @@ const lib = {
      * @param {Object} message
      * @returns {YouTubeSong || undefined}
      */
-    getById: (id, message) => {
-        return new Promise((resolve, reject) => {
+    getById: (id, message) =>
+        new Promise((resolve, reject) => {
             // ...
             if(Array.isArray(id)) id = id.join(',');
             //console.log('id:', id);
@@ -100,12 +100,14 @@ const lib = {
                 return resolve(output);
             });
         })
-    },
+    ,
 
-    getPlaylistById: async (id, message) => {
-        return new Promise(async (resolve, reject) => {
+    getPlaylistById: async (id, message) =>
+        new Promise(async (resolve, reject) => {
             let output = [];
             let pageToken = 'placeholder';
+            let totalResults;
+            let i = 0;
             while (pageToken) {
 
                 const items = await new Promise(async (resolve, reject) => 
@@ -118,12 +120,15 @@ const lib = {
                     (pageToken !== 'placeholder' ?
                     `&pageToken=${pageToken}` : '') +
                     `&playlistId=${id}`)
+
                     .then(async response => {
-                        result = response.data;
+                        const result = response.data;
+                        totalResults = result.pageInfo.totalResults;
+                        i++;
 
                         if (!result || !result.items ||
                         result.items.length == 0) {
-                            // say something?
+                            await message.send('an error occured!');
                             return resolve(undefined);
                         }
 
@@ -138,20 +143,49 @@ const lib = {
                             pageToken = undefined;
                         }
 
-                        return resolve(await videos);
+                        resolve(await videos);
 
                     })
-                    .catch(error =>
-                        resolve(undefined)
-                    );
+                    .catch(() => resolve(undefined));
                 });
 
-                if (!items) return resolve(undefined);
+                if (!items) {
+                    await message.send('an error occured!');
+                    return resolve(undefined);
+                }
+                const percent = Math.round(
+                    (100 / (totalResults / 50) * i));
+                if (totalResults > 50 && percent < 100) 
+                    message.send(`processing... ${percent}%`);
                 items.forEach(elem => output.push(elem));
             }
             return resolve(output);
-        });
-    }
+        })
+    ,
+
+    search: async (query, message) => 
+        new Promise(async (resolve, reject) => {
+            console.log(query);
+            yt.search(query, 1, { 'type': 'video,playlist' }, 
+            async (error, result) => {
+                //result.items.forEach(elem => console.log(elem.snippet.title))
+                if (error) {
+                    message.send(error);
+                    return resolve(undefined);
+                }
+                if (result.items.length == 0)
+                    return resolve(undefined);
+                const id = result.items[0].id
+                if (id.kind === 'youtube#video') {
+                    return resolve(await lib.getById(id.videoId, 
+                        message));
+                }
+                else {
+                    return resolve(await lib.getPlaylistById(
+                        id.playlistId, message));
+                }
+            });
+        })
 
 }
 

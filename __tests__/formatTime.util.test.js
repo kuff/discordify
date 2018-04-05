@@ -1,6 +1,6 @@
 const { formatTime } = require('../src/util.js');
 
-it('Positive Inputs', () => {
+it('Works', () => {
 
     expect( formatTime(120))
     .toBe(  '2:00');
@@ -39,7 +39,7 @@ it('Positive Inputs', () => {
     .toBe(  '24:41:40');
 });
 
-it ('Edge Cases', () => {
+it ('Handles Edge Cases', () => {
     
     expect( formatTime(0))
     .toBe(  '0:00');

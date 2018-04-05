@@ -1,11 +1,12 @@
 const { memory_size } = require('../settings.json');
-const { shuffle } = require('./util.js');
+const { shuffle, formatTime } = require('./util.js');
 
 module.exports = class Queue {
 
     constructor() {
         this.queue = [];
         this.history = [];
+        this.size = () => this.queue.length;
     }
 
     enqueue(song, args) {
@@ -61,12 +62,22 @@ module.exports = class Queue {
         return this.queue[0];
     }
 
-    print() {
-        // ...
-    }
-
     clear() {
         this.queue = [];
+    }
+
+    queueTime() {
+        let containsPlaylist = false;
+        const total = this.queue.reduce((time, elem) => {
+            if (elem.duration == 0) containsPlaylist = true;
+            return time += elem.duration;
+        }, 0);
+        if (containsPlaylist)
+            return '>' + formatTime(total);
+        /*isn't calculated properly since missing duration of 
+        currently playing song and must therefore be moved to util 
+        and rewritten at some point before proper use!*/
+        return formatTime(total);
     }
 
 }
