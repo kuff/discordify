@@ -25,7 +25,7 @@ jest.setTimeout(10000);
 it('Correctly Fetches Single YouTube Videos From Links', 
 async done => {
     const test = await f.get(
-        `https://www.youtube.com/watch?v=${id}`, messageMock)
+        [`https://www.youtube.com/watch?v=${id}`], messageMock)
     const expected = await getById(id);
     test.message = undefined;
     expect(JSON.stringify(test))
@@ -35,7 +35,7 @@ async done => {
 
 it('Fetches YouTube Playlists From Links', async done => {
     const test = await f.get(
-        `https://www.youtube.com/watch?v=${id}&list=${list_id}`, 
+        [`https://www.youtube.com/watch?v=${id}&list=${list_id}`], 
         messageMock);
     const set = new Set();
     test.forEach(elem => set.add(elem.id));
@@ -48,19 +48,19 @@ it('Fetches YouTube Playlists From Links', async done => {
 });
 
 it('Returns Undefined On Invalid Link', async done => {
-    expect(await f.get(invalid_link, messageMock))
+    expect(await f.get([invalid_link], messageMock))
         .toEqual(undefined);
     done();
 })
 
 it('Fetches YouTube Videos From Queries', async done => {
-    expect(await f.get(video_query, messageMock))
+    expect(await f.get([video_query], messageMock))
         .toEqual(await getById('dQw4w9WgXcQ', messageMock));
     done();
 });
 
 it('Fetches YouTube Playlists From Queries', async done => {
-    const test = f.get(playlist_query, messageMock)
+    const test = f.get([playlist_query], messageMock)
     const expected = getPlaylistById(
         'PLFsQleAWXsj_4yDeebiIADdH5FMayBiJo', messageMock);
     await Promise.all([test, expected]);
@@ -70,18 +70,18 @@ it('Fetches YouTube Playlists From Queries', async done => {
 });
 
 it('Return Undefined On Bad Query', async done => {
-    expect(await f.get(bad_query, messageMock))
+    expect(await f.get([bad_query], messageMock))
         .toEqual(undefined);
     done();
 })
 
 it('Queues Requests', async done => {
     const test = f.get(
-        `https://www.youtube.com/watch?v=${id}&list=${list_id}`, 
+        [`https://www.youtube.com/watch?v=${id}&list=${list_id}`], 
         messageMock);
     setTimeout(async () => {
         const test2 = f.get(
-            `https://www.youtube.com/watch?v=${id}`, messageMock);
+            [`https://www.youtube.com/watch?v=${id}`], messageMock);
         await test;
         expect(test2)
             .not.toHaveProperty('id');
@@ -96,7 +96,7 @@ it('Queues Requests', async done => {
 });
 
 it('Resets The Queue When Done', async done => {
-    let test = f.get(`https://www.youtube.com/watch?v=${id}`, 
+    let test = f.get([`https://www.youtube.com/watch?v=${id}`], 
         messageMock);
     expect(f.queue.length)
         .toEqual(1);
@@ -104,10 +104,10 @@ it('Resets The Queue When Done', async done => {
     expect(f.queue.length)
         .toEqual(0);
     f.get(
-        `https://www.youtube.com/watch?v=${id}&list=${list_id}`,
+        [`https://www.youtube.com/watch?v=${id}&list=${list_id}`],
         messageMock);
     test = f.get(
-        `https://www.youtube.com/watch?v=${id}`, messageMock);
+        [`https://www.youtube.com/watch?v=${id}`], messageMock);
 
     setTimeout(async () => {
         expect(f.queue.length)

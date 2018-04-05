@@ -165,7 +165,6 @@ const lib = {
 
     search: async (query, message) => 
         new Promise(async (resolve, reject) => {
-            console.log(query);
             yt.search(query, 1, { 'type': 'video,playlist' }, 
             async (error, result) => {
                 //result.items.forEach(elem => console.log(elem.snippet.title))
