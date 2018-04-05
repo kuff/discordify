@@ -9,7 +9,7 @@ yt.setKey(youtube_api_key);
 result = 'placeholder string';
 raw = result;
 
-it('Doesn\'t Error On Correct Id', done =>
+it('Doesn\'t Error On Id', done =>
     getById(id, {}).then((response, error) => {
         expect(error)
             .toBe(undefined);
@@ -23,7 +23,7 @@ it('Doesn\'t Error On Correct Id', done =>
     })
 );
 
-it('Assigns Fields Correctly To Reponse Object', () => {
+it('Assigns Fields To Reponse Object', () => {
     expect(result)
         .not.toEqual('placeholder string');
 

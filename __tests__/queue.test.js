@@ -55,7 +55,7 @@ it('Enqueues With No Flags Provided With No Flags Provided', () => {
         ]);
 });
 
-it('Dequeues And Manages History Correctly', async done => {
+it('Dequeues And Manages History', async done => {
     expect(queue.queue)
         .toEqual([
             { song: 'a song' },
@@ -324,7 +324,7 @@ it('Randomly Shuffles Songs When Enqueued With "Shuffle"', () => {
         .toBe(true);
 });
 
-it('Enqueues Songs Flagged With "Now" Correctly', () => {
+it('Enqueues Songs Flagged With "Now"', () => {
     queue = new Queue();
     queue.enqueue({ song: 'a song'}, [ 'next' ]);
     expect(queue.queue)
@@ -350,30 +350,29 @@ it('Enqueues Songs Flagged With "Now" Correctly', () => {
         ]);
 })
 
-it('Enqueues Songs Flagged With Both "Shuffle" And "Next" Correctly', 
-    () => {
-        const input = [
-            { song: 'a song' },
-            { song: 'another song' },
-            { this: 'must be an object' },
-            { but: 'what it', contains: 'doesn\'t matter' }
-        ];
-        queue = new Queue();
-        queue.enqueue(input, ['shuffle', 'next']);
-        expect(queue.queue.length)
-        .toEqual(4);
-        for(let i=0;i<4;i++) {
-            queue.queue[i].flags
-        }
-        expect(queue.queue)
-            .not.toEqual(input); // <- might fail, just run again!
-        for(let i=0;i<4;i++) {
-            expect(queue.queue.indexOf(input[i]))
-                .not.toEqual(-1);
-        }
-    });
+it('Enqueues Songs Flagged With Both "Shuffle" And "Next"', () => {
+    const input = [
+        { song: 'a song' },
+        { song: 'another song' },
+        { this: 'must be an object' },
+        { but: 'what it', contains: 'doesn\'t matter' }
+    ];
+    queue = new Queue();
+    queue.enqueue(input, ['shuffle', 'next']);
+    expect(queue.queue.length)
+    .toEqual(4);
+    for(let i=0;i<4;i++) {
+        queue.queue[i].flags
+    }
+    expect(queue.queue)
+        .not.toEqual(input); // <- might fail, just run again!
+    for(let i=0;i<4;i++) {
+        expect(queue.queue.indexOf(input[i]))
+            .not.toEqual(-1);
+    }
+});
 
-it('Peeks At Queue Correctly', () => {
+it('Peeks At Queue', () => {
     queue = new Queue();
     expect(queue.peek())
         .toEqual(undefined);
@@ -398,7 +397,7 @@ it('Peeks At Queue Correctly', () => {
 
 });
 
-it('Peeks At History Correctly', () => {
+it('Peeks At History', () => {
     queue = new Queue();
     expect(queue.peek(queue.history))
         .toEqual(undefined);
@@ -413,12 +412,10 @@ it('Peeks At History Correctly', () => {
         .toEqual(5);
 });
 
-it('Clears Correctly', () => {
+it('Clears Queue', () => {
     queue = new Queue();
     expect(queue.queue)
         .toEqual([]);
-    /*expect(queue.history)
-        .toEqual([]);*/
     queue.enqueue([
         { the: 'next song is pointless' },
         { the_previous: 'song is right' }
@@ -427,10 +424,4 @@ it('Clears Correctly', () => {
     queue.clear();
     expect(queue.queue)
         .toEqual([]);
-    /*expect(queue.history)
-        .toEqual([]);*/
-});
-
-it('Prints Correctly', () => {
-    // ...
 });

@@ -32,22 +32,24 @@ module.exports = {
         }
     },
 
-    playing: (song, next) => {
+    playing: (client, song, queue) => {
+        // generate embed
         const embed = {
             embed: {
                 title: song.title,
-                description: "by `" + song.artist + "`",
+                description: "by *" + song.artist + "*",
                 url: song.link,
                 color: embed_color,
                 footer: {
                     icon_url: song.message.author.avatarURL,
-                    text: "Requested by " + song.message.author.username
+                    text: "Requested by " + song.message.author
+                        .username
                 },
                 thumbnail: {
                     url: song.thumbnail
                 },
                 author: {
-                    name: "Now playing"
+                    name: "PUT DURATION HERE"
                 },
                 fields: [
                     {
@@ -57,24 +59,74 @@ module.exports = {
                     },
                     {
                         name: "Duration",
-                        value: "`" + formatTime(song.duration) + "`",
+                        value: "`" + (song.duration == 0 
+                            ? "🔴 LIVE" 
+                            : formatTime(song.duration)
+                        ) + "`",
                         inline: true
                     }
                 ]
             }
         };
+        const next = queue.peek();
         if (next) {
-            embed.embed.fields[2] = {
+            embed.embed.fields[0] = embed.embed.fields[1];
+            embed.embed.fields[1] = {
                 name: "Up next",
-                value: "`" + next.title + "`" + 
-                    "by `" + next.artist + "`\n"
+                value: "*" + next.title + "*\n" + 
+                    "by *" + next.artist + "*",
+                inline: true
             }
+            embed.embed.footer.text += 
+                ` • ${queue.size()} item${
+                    queue.size() > 1 ? 's' : ''
+                } in queue • queue time: ${queue.queueTime()}`;
         }
         return embed;
-    },
+    }/*,
 
-    queue: () => {
-        // ...
-    }
+    queue: (client, song, queue) => {
+        let songs;
+        if (Array.isArray(song)) {
+            songs = song;
+            song = songs[0];
+        }
+        const currentSong = queue.peek(queue.history);
+        const embed = {
+            embed: {
+                title: song.title,
+                description: "by *" + song.artist + "*",
+                url: song.link,
+                color: embed_color,
+                footer: {
+                    icon_url: song.message.author.avatarURL,
+                    text: `Currently playing *${currentSong.title}* 
+                        by *${currentSong.artist}* • next song plays 
+                        in MATH...`
+                },
+                thumbnail: {
+                    url: song.thumbnail
+                },
+                author: {
+                    name: "Queued"
+                },
+                fields: [
+                    {
+                        name: "Duration",
+                        value: "`" + (song.duration == 0
+                            ? "🔴 LIVE"
+                            : formatTime(song.duration)
+                        ) + "`",
+                        inline: true
+                    },
+                    {
+                        name: "Queue time",
+                        value: "`" + queue.queueTime() + "`",
+                        inline: true
+                    }
+                ]
+            }
+        };
+    }*/
     
 }

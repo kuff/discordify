@@ -25,8 +25,11 @@ module.exports = class Message {
         }
     }
 
-    async sendNew(message) {
-        this.obj = await this.obj.channel.send(message);
+    async sendNew(message, delete_current_message = false) {
+        const channel = this.obj.channel;
+        if (delete_current_message)
+            await this.obj.delete();
+        this.obj = await channel.send(message);
     }
 
 }

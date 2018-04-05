@@ -1,6 +1,6 @@
 const { formatPlays } = require('../src/util.js');
 
-it('Positive Inputs', () => {
+it('Works', () => {
 
     expect( formatPlays(1))
     .toBe(  '1');
@@ -37,4 +37,8 @@ it('Positive Inputs', () => {
 
     expect( formatPlays(6543219239))
     .toBe(  '6.543.219.239');
+});
+
+it('Handles Edge Cases?', () => {
+    // ...
 });
