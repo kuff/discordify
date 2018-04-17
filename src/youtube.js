@@ -1,5 +1,4 @@
 const { youtube_api_key } = require('../config.json');
-const { memory_size } = require('../settings.json');
 const Song = require('./song.js');
 const YouTube = require('youtube-node');
 const ytdl = require('ytdl-core');
@@ -17,13 +16,32 @@ const lib = {
             super(args);
         }
     
-        play() {
-            return ytdl(this.link, { filter: 'audioonly' });
+        async play(bitrate = 64) {
+            const info = await ytdl.getInfo(this.link);
+            
+            let formats = ytdl.filterFormats(info.formats, 
+                'audioonly');
+            if (this.duration == 0)
+                formats = ytdl.filterFormats(info.formats, format =>
+                    format.itag > 90 && format.itag < 96);
+            let prevFormats = formats;
+            formats = ytdl.filterFormats(info.formats, format => 
+                format.audioBitrate == bitrate);
+            if (formats.length == 0)
+                formats = prevFormats;
+            else prevFormats = formats;
+            formats = ytdl.filterFormats(info.formats, format =>
+                format.audioEncoding === 'opus');
+            if (formats.length == 0)
+                formats = prevFormats;
+            
+            return ytdl(this.link, { filter: format =>
+                format.itag === formats[0].itag });
         }
     
-        related(history) {
+        related(history = []) {
             return new Promise((resolve, reject) => {
-                yt.related(this.id, memory_size + 5,
+                yt.related(this.id, history.length + 2,
                 (error, result) => {
 
                     if (error) {
@@ -31,7 +49,6 @@ const lib = {
                         return reject(error);
                     }
 
-                    if (!history) history = [];
                     history = history.map(elem => elem.id);
                     const remaining = result.items.reduce(
                         (prev, elem) => {
@@ -44,7 +61,7 @@ const lib = {
                     const rand = Math.round(Math.random() * 
                         (remaining.length - 1));
 
-                    lib.getById(remaining[rand])
+                    lib.getById(remaining[rand], this.message)
                         .then((result, error) => {
                             if (error) return reject(error);
                             return resolve(result);
@@ -65,7 +82,6 @@ const lib = {
         new Promise((resolve, reject) => {
             // ...
             if(Array.isArray(id)) id = id.join(',');
-            //console.log('id:', id);
             yt.getById(id, (error, result) => {
                 // return undefined if the request failed
                 if (error) {
@@ -156,7 +172,7 @@ const lib = {
                 const percent = Math.round(
                     (100 / (totalResults / 50) * i));
                 if (totalResults > 50 && percent < 100) 
-                    message.send(`processing... ${percent}%`);
+                    await message.send(`processing... ${percent}%`);
                 items.forEach(elem => output.push(elem));
             }
             return resolve(output);
@@ -180,8 +196,13 @@ const lib = {
                         message));
                 }
                 else {
-                    return resolve(await lib.getPlaylistById(
-                        id.playlistId, message));
+                    const output = await lib.getPlaylistById(
+                        id.playlistId, message);
+                    // add list_ids to song links
+                    output.forEach(elem => elem.link += 
+                        `&list=${id.playlistId}`);
+                    // finally, return the result
+                    resolve(output);
                 }
             });
         })

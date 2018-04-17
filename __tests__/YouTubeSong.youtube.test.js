@@ -126,20 +126,6 @@ it('Does Related Search With Long Memory Of Related Songs', done => {
     })
 });
 
-it('Randomizes Related Search Output (Probably)', done => {
-    const song = new YouTubeSong(input);
-    const set = new Set();
-    song.related().then(result => {
-        set.add(result.id)
-        song.related().then(result => {
-            set.add(result.id)
-            song.related().then(result => {
-                set.add(result.id)
-                //console.log(set);
-                expect(set.size)
-                    .toEqual(3); // <- will fail sometimes, also
-                done();          //    goes to show randomness!
-            })
-        })
-    })
-});
+/*it('Randomizes Related Search Output (Probably)', done => {
+    // ...
+});*/

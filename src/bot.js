@@ -24,106 +24,113 @@ client.on('ready', () => {
 });
 
 client.on('message', async message => {
+    try {
 
-    if (message.author.id === client.user.id) return;
+        if (message.author.id === client.user.id) return;
 
-    const args = message.content.trim().split(/ +/g);
-    let command = args.shift().toLowerCase();
-    const p = command[0];
-    command = command.slice(prefix.length);
+        const args = message.content.trim().split(/ +/g);
+        let command = args.shift().toLowerCase();
+        const p = command[0];
+        command = command.slice(prefix.length);
 
-    // Figure out a way to catch flags...
-    message = new Message(message);
-    
-    if (p !== prefix) return;
+        // Figure out a way to catch flags...
+        message = new Message(message);
 
-    console.log(args);
-    console.log(command);
+        if (p !== prefix) return;
 
-    switch(command) {
+        console.log(args);
+        console.log(command);
 
-        case 'help':
-        case 'h':
-            // ...
-            break;
+        switch (command) {
 
-        case 'ping':
-        case 'latency':
-        case 'measure':
-            message.embed(embeds.ping(client, 
-                await ping(message)));
-            break;
+            case 'help':
+            case 'h':
+                // ...
+                break;
 
-        case 'play':
-        case 'song':
-        case 's':
-            const result = await f.get(args, message);
-            if (!result) return;
-            q.enqueue(result, args);
-            if (true || !pb.playing) {
-                const song = await q.dequeue();
-                /*client.user.setPresence({
-                    status: 'online',
-                    game: {
-                        name: `${song.title}\n
-                        by ${song.artist}\n
-                        suggested by ${song.message.author}`
-                    }
-                });*/
-                pb.playing = song;
-                return message.embed(embeds.playing(client, song,
-                    q));
-            }
-            // return message.embed(embeds.queued(...);
-            break;
+            case 'ping':
+            case 'latency':
+            case 'measure':
+                message.send(embeds.ping(client,
+                    await ping(message)));
+                break;
 
-        case 'pause':
-        case 'p':
-            // ...
-            break;
+            case 'play':
+            case 'song':
+            case 's':
+                const result = await f.get(args, message);
+                if (!result) return;
+                let queue_length;
+                if (pb.playing) queue_length = pb.queueTime();
+                q.enqueue(result, [ 'autoplay', 'shuffle' ]);
+                if (!pb.playing)
+                    return pb.play();
+                    /*client.user.setPresence({
+                        status: 'online',
+                        game: {
+                            name: `${song.title}\n
+                            by ${song.artist}\n
+                            suggested by ${song.message.author}`
+                        }
+                    });*/
+                return message.send(embeds.queued(pb, result, 
+                    queue_length));
+                break;
 
-        case 'unpause':
-        case 'resume':
-            // ...
-            break;
-        
-        case 'remaining':
-        case 'next':
-        case 'queue':
-            // ...
-            break;
+            case 'pause':
+            case 'p':
+                // ...
+                break;
 
-        case 'skip':
-            // ...
-            break;
+            case 'unpause':
+            case 'resume':
+                // ...
+                break;
 
-        case 'previous':
-        case 'replay':
-            // ...
-            break;
+            case 'remaining':
+            case 'playing':
+            case 'left':
+            case 'next':
+            case 'queue':
+                // ...
+                break;
 
-        case 'recent':
-        case 'history':
-            // ...
-            break;
+            case 'skip':
+                pb.skip(message);
+                break;
 
-        case 'volume':
-        case 'v':
-            // ...
-            break;
-            
-        case 'end':
-        case 'stop':
-            // ...
-            break;
-        
-        case 'reload':
-            q = new Queue();
-            f = new Fetcher();
-            pb = new Playback();
-            // ...
-            break;
-            
+            case 'replay':
+                // ...
+                break;
+
+            case 'recent':
+            case 'previous':
+            case 'history':
+                // ...
+                break;
+
+            case 'volume':
+            case 'v':
+                // ...
+                break;
+
+            case 'end':
+            case 'stop':
+                // ...
+                break;
+
+            case 'reload':
+                q = new Queue();
+                f = new Fetcher();
+                pb = new Playback();
+                // ...
+                break;
+
+        }
+
+    } catch(error) {
+        console.log(error);
+        message.channel.send('A fatal error occured:', error);
     }
 });
 
