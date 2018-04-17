@@ -1,4 +1,4 @@
-const version = require('../package.json').version;
+const { version } = require('../package.json');
 const { embed_color } = require('../settings.json');
 const { formatPlays, formatTime } = require('./util.js');
 
@@ -9,7 +9,7 @@ module.exports = {
             embed: {
                 color: embed_color,
                 footer: {
-                    text: `A heatbeat is sent every 45 seconds • Discordify v${version} (beta)`
+                    text: `Discordify v${version} (beta) • A heatbeat is sent every 45 seconds`
                 },
                 fields: [
                     {
@@ -32,7 +32,12 @@ module.exports = {
         }
     },
 
-    playing: (client, song, queue) => {
+    playing: instance => {
+        const client = instance.client;
+        const song = instance.playing;
+        const queue = instance.queue;
+        const duration = song.duration == 0 ? '∞' : formatTime(song.duration);
+
         // generate embed
         const embed = {
             embed: {
@@ -42,57 +47,61 @@ module.exports = {
                 color: embed_color,
                 footer: {
                     icon_url: song.message.author.avatarURL,
-                    text: "Requested by " + song.message.author
+                    text: "Suggested by " + song.message.author
                         .username
                 },
                 thumbnail: {
                     url: song.thumbnail
                 },
                 author: {
-                    name: "PUT DURATION HERE"
+                    name: duration
                 },
-                fields: [
-                    {
-                        name: "Plays",
-                        value: "`" + formatPlays(song.plays) + "`",
-                        inline: true
-                    },
-                    {
-                        name: "Duration",
-                        value: "`" + (song.duration == 0 
-                            ? "🔴 LIVE" 
-                            : formatTime(song.duration)
-                        ) + "`",
-                        inline: true
-                    }
-                ]
+                fields: []
             }
         };
+
         const next = queue.peek();
         if (next) {
-            embed.embed.fields[0] = embed.embed.fields[1];
-            embed.embed.fields[1] = {
+            embed.embed.fields[0] = {
                 name: "Up next",
                 value: "*" + next.title + "*\n" + 
-                    "by *" + next.artist + "*",
-                inline: true
+                    "by *" + next.artist + "*"
             }
             embed.embed.footer.text += 
                 ` • ${queue.size()} item${
                     queue.size() > 1 ? 's' : ''
-                } in queue • queue time: ${queue.queueTime()}`;
+                } in queue • ${instance.queueTime()} queue time`;
         }
         return embed;
-    }/*,
+    },
 
-    queue: (client, song, queue) => {
+    queued: (instance, song, queue_length) => {
+        const client = instance.client;
+        const queue = instance.queue;
+        const playing = instance.playing;
+        /*const time_till_next_song = playing.duration - instance
+            .dispatcher.totalStreamTime;*/
+        
+        let duration
         let songs;
         if (Array.isArray(song)) {
             songs = song;
-            song = songs[0];
+            /*song = songs.reduce((cum, elem) => {
+                if (elem.plays > cum.plays) return elem;
+                return cum;
+            });*/
+            song = songs[0]
+            duration = instance.queueTime(songs);
         }
-        const currentSong = queue.peek(queue.history);
-        const embed = {
+        else duration = formatTime(song.duration);
+
+        /*let cum_duration;
+        if (songs) cum_duration = songs.reduce((cum, elem) => 
+                cum += elem.duration, 0);
+        else cum_duration = song.duration;*/
+
+        // generate embed
+        return embed = {
             embed: {
                 title: song.title,
                 description: "by *" + song.artist + "*",
@@ -100,33 +109,33 @@ module.exports = {
                 color: embed_color,
                 footer: {
                     icon_url: song.message.author.avatarURL,
-                    text: `Currently playing *${currentSong.title}* 
-                        by *${currentSong.artist}* • next song plays 
-                        in MATH...`
+                    text: `Currently playing ${playing.title} 
+                        by ${playing.artist}`
                 },
                 thumbnail: {
                     url: song.thumbnail
                 },
                 author: {
-                    name: "Queued"
+                    name: `Queued ${songs ? `${songs.length} 
+                        items, starting with:` : 'an item:'}`
                 },
                 fields: [
                     {
                         name: "Duration",
                         value: "`" + (song.duration == 0
-                            ? "🔴 LIVE"
-                            : formatTime(song.duration)
+                            ? "∞"
+                            : duration
                         ) + "`",
                         inline: true
                     },
                     {
                         name: "Queue time",
-                        value: "`" + queue.queueTime() + "`",
+                        value: "`" + queue_length + "`",
                         inline: true
                     }
                 ]
             }
         };
-    }*/
+    }
     
 }

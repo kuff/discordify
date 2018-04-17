@@ -1,5 +1,5 @@
 const { memory_size } = require('../settings.json');
-const { shuffle, formatTime } = require('./util.js');
+const { shuffle } = require('./util.js');
 
 module.exports = class Queue {
 
@@ -42,6 +42,7 @@ module.exports = class Queue {
             prev.flags.indexOf('autoplay') != -1) {
                 song = await prev.related(this.history);
                 song.flags = [ 'autoplay' ];
+                this.history.push(prev)
             }
             else {
                 this.history.push(prev)
@@ -49,7 +50,8 @@ module.exports = class Queue {
         }
 
         if (song && !(this.peek(this.history) === song)) {
-            if (this.history.length == memory_size) this.history.shift();
+            if (this.history.length == memory_size) 
+                this.history.shift();
             this.history.push(song);
         }
         return song;
@@ -64,20 +66,6 @@ module.exports = class Queue {
 
     clear() {
         this.queue = [];
-    }
-
-    queueTime() {
-        let containsPlaylist = false;
-        const total = this.queue.reduce((time, elem) => {
-            if (elem.duration == 0) containsPlaylist = true;
-            return time += elem.duration;
-        }, 0);
-        if (containsPlaylist)
-            return '>' + formatTime(total);
-        /*isn't calculated properly since missing duration of 
-        currently playing song and must therefore be moved to util 
-        and rewritten at some point before proper use!*/
-        return formatTime(total);
     }
 
 }

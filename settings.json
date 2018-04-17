@@ -2,6 +2,6 @@
     "prefix": ".",
     "embed_color": 923430,
     "memory_size": 5,
-    "default_volume": 0.02,
-    "buffer_size": 20
+    "default_volume": 0.05,
+    "audio_passes": 2
 }

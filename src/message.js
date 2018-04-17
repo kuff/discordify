@@ -1,4 +1,7 @@
+'use strict'
+
 const { self_id } = require('../config.json');
+const embeds = require('./embeds.js');
 
 module.exports = class Message {
 
@@ -7,21 +10,21 @@ module.exports = class Message {
         this.author = message.author;
     }
 
-    async send(string) {
+    async send(message) {
         if (this.obj.author.id == self_id) {
-            this.obj = await this.obj
-                .edit(`${this.author}, ${string}`);
+            if (message.embed) {
+                this.obj = await this.obj
+                    .edit(message);
+            } else {
+                this.obj = await this.obj
+                    .edit(`${this.author}, ${message}`);
+            }
         } else {
-            this.obj = await this.obj.reply(string);
-        }
-    }
-
-    async embed(embed) {
-        if (this.obj.author.id == self_id) {
-            this.obj = await this.obj
-                .edit(embed);
-        } else {
-            this.obj = await this.obj.channel.send(embed);
+            if (message.embed) {
+                this.obj = await this.obj.channel.send(message);
+            } else {
+                this.obj = await this.obj.reply(message);
+            }
         }
     }
 
@@ -29,7 +32,16 @@ module.exports = class Message {
         const channel = this.obj.channel;
         if (delete_current_message)
             await this.obj.delete();
-        this.obj = await channel.send(message);
+        if (message.embed) {
+            this.obj = await channel.send(message);
+        } else {
+            this.obj = await channel.send(`${this.author}, 
+                ${message}`);
+        }
+    }
+
+    async delete() {
+        await this.obj.delete();
     }
 
 }
