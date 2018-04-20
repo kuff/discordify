@@ -1,4 +1,5 @@
-
+const { self_id } = require('../config.json');
+const { prefix } = require('../settings.json');
 
 module.exports = {
 
@@ -55,6 +56,33 @@ module.exports = {
             array.splice(rIndex, 1);
         }
         return randomizedDeck;
+    },
+
+    setPresence: instance => {
+        if (instance.playing) return instance.client.user
+        .setPresence({
+            status: 'online',
+            game: {
+                name: `at ${instance.setVolume()}% volume`
+            }
+        })
+        instance.client.user.setPresence({
+            status: 'idle',
+            game: {
+                name: `nothing | ${prefix}help`
+            }
+        })
+    },
+
+    inVoice: member => {
+        try {
+            const map = member.voiceChannel.members;
+            const array = Array.from(map.keys());
+            return array.includes(self_id);
+        }
+        catch (error) {
+            return false;
+        }
     }
     
 }

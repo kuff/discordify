@@ -35,8 +35,10 @@ module.exports = class Message {
         if (message.embed) {
             this.obj = await channel.send(message);
         } else {
-            this.obj = await channel.send(`${this.author}, 
-                ${message}`);
+            if (this.author.id == self_id) this.obj = await channel
+                .send(message);
+            else this.obj = await channel.send(this.author + ', ' +
+                message);
         }
     }
 

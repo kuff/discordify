@@ -41,7 +41,7 @@ const lib = {
     
         related(history = []) {
             return new Promise((resolve, reject) => {
-                yt.related(this.id, history.length + 2,
+                yt.related(this.id, history.length + 3,
                 (error, result) => {
 
                     if (error) {
@@ -50,16 +50,16 @@ const lib = {
                     }
 
                     history = history.map(elem => elem.id);
-                    const remaining = result.items.reduce(
-                        (prev, elem) => {
-                            const id = elem.id.videoId;
-                            if (history.indexOf(id) != -1)
-                                return prev;
-                            prev.push(id);
-                            return prev;
-                        }, []);
-                    const rand = Math.round(Math.random() * 
-                        (remaining.length - 1));
+                    let remaining = result.items.reduce(
+                    (array, elem) => {
+                        if (array.length == 3) return array;
+                        const id = elem.id.videoId;
+                        if (history.indexOf(id) != -1)
+                            return array;
+                        array.push(id);
+                        return array;
+                    }, []);
+                    const rand = Math.round(Math.random() * 2);
 
                     lib.getById(remaining[rand], this.message)
                         .then((result, error) => {
