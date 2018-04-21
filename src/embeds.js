@@ -214,51 +214,53 @@ module.exports = {
                         name: '`' + prefix + 'ping`',
                         value: 'Shows the heartbeat ping ' +
                             'and performs a message-round-time ' +
-                            'measurement\n~'
+                            'measurement\n\n' +
+                            '       **aliases:** `latency`, `measure`\n~'
                     },
                     {
                         name: '`' + prefix + 'play <params> --flags?`',
                         value: 'Attempts to fetch the song given ' +
-                            'as a parameter and initiates playback' +
-                            ' if successful\n\n' +
+                            'as a parameter and initiate playback' +
+                            ' if not already playing, else adding' +
+                            ' the result to the queue\n\n' +
                             '       **aliases:** `song`, `s`\n' +
                             '       **supported params:** YouTube video- or playlist links as well as search queries\n' +
                             '       **supported flags: (optional)**\n' +
                             '               `shuffle`: shuffles the requested playlist\n' +
                             '               `next`: inserts requested item(s) at the start of the queue\n' +
                             '               `loop`: loops the requested item(s) until skipped with `' + prefix + 'skip`\n' +
-                            '               `autoplay`: automatically queues related songs when the requested item finishes playing and the queue is empty\n' +
-                            '       **conditions:** you must be in a voice channel to use this command and if music is already playing, you must be in the same voice channel as the bot\n~'
+                            '               `autoplay`: automatically queues related songs when the requested item\n       finishes playing and the queue is empty\n' +
+                            '       **conditions:** you must be in a voice channel to use this command and if music is\n       already playing, you must be in the same voice channel as the bot\n~'
                     },
                     {
                         name: '`' + prefix + 'pause`',
                         value: 'Pauses playback\n\n' +
                             '       **aliases:** `p`\n' +
-                            '       **conditions:** you must be in the same voice channel as the bot and it has to be playing\n~'
+                            '       **conditions:** you must be in the same voice channel as the bot and it has to be\n       playing\n~'
                     },
                     {
                         name: '`' + prefix + 'resume`',
                         value: 'Resumes playback\n\n' +
                             '       **aliases:** `unpause`, `up`\n' +
-                            '       **conditions:** you must be in the same voice channel as the bot and playback has to be paused\n~'
+                            '       **conditions:** you must be in the same voice channel as the bot and playback has\n       to be paused\n~'
                     },
                     {
                         name: '`' + prefix + 'skip`',
-                        value: 'Skips the items currently playing\n\n' +
+                        value: 'Skips the item currently playing\n\n' +
                             '       **aliases:** `next`\n' +
-                            '       **conditions:** you must be in the same voice channel as the bot and it has to be playing or paused\n~'
+                            '       **conditions:** you must be in the same voice channel as the bot and it has to be\n       playing or paused\n~'
                     },
                     {
                         name: '`' + prefix + 'remaining`',
                         value: 'Retrieves som info on the song currently playing as well as the queue\n\n' +
                             '       **aliases:** `playing`, `left`, `queue`\n' +
-                            '       **conditions:** you must be in the same voice channel as the bot and it has to be playing or paused\n~'
+                            '       **conditions:** you must be in the same voice channel as the bot and it has to be\n       playing or paused\n~'
                     },
                     {
                         name: '`' + prefix + 'end`',
                         value: 'End playback\n\n' +
                             '       **aliases:** `stop`\n' +
-                            '       **conditions:** you must be in the same voice channel as the bot and it has to be playing or paused\n~'
+                            '       **conditions:** you must be in the same voice channel as the bot and it has to be\n       playing or paused\n~'
                     }
                 ]
             }

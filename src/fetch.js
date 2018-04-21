@@ -11,7 +11,7 @@ module.exports = class Fetch {
 
     async get(query, message, args) {
         return new Promise(async (resolve, reject) => {
-            let query_string = ''
+            let query_string = '';
             query.map(elem => query_string += elem + ',');
             query = query_string.slice(0, query_string.length - 1);
             // notify the user that their request is not currently
