@@ -28,8 +28,9 @@ client.on('message', async message => {
     const command = params.shift().toLowerCase()
         .slice(prefix.length);
     const args = params.reduce((prev, elem, i) => {
-        if (elem.startsWith('--')) {
-            prev.push(elem.slice(2));
+        // this can probably be improved
+        if (elem.startsWith('-')) {
+            prev.push(elem.slice(1));
             params[i] = undefined;
         }
         return prev;

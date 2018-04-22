@@ -90,9 +90,18 @@ module.exports = {
         }
         else duration = formatTime(song.duration);
 
-        if (queue.peek() === song) queue_length = formatTime(
-            Math.round(playing.duration - (instance.dispatcher
-            .time / 1000)));
+        const new_songs = songs ? songs.length : 1;
+        const queue_size = queue.size() - new_songs + 1;
+
+        if (queue.peek() === song) {
+            if (playing.duration > 0) queue_length = formatTime(
+                Math.round(playing.duration - (instance.dispatcher
+                .time / 1000)));
+            else queue_length = '∞';
+        }
+        if (instance.dispatcher.paused) queue_length += ' (paused)';
+        else if (queue_size > 1) queue_length += ` (${queue_size
+            } items)`;
 
         // generate embed
         return embed = {
@@ -218,7 +227,7 @@ module.exports = {
                             '       **aliases:** `latency`, `measure`\n~'
                     },
                     {
-                        name: '`' + prefix + 'play <params> --flags?`',
+                        name: '`' + prefix + 'play <params> -flags?`',
                         value: 'Attempts to fetch the song given ' +
                             'as a parameter and initiate playback' +
                             ' if not already playing, else adding' +
