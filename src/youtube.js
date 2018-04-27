@@ -5,7 +5,7 @@ const ytdl = require('ytdl-core');
 const axios = require('axios');
 const moment = require('moment');
 
-yt = new YouTube();
+const yt = new YouTube();
 yt.setKey(youtube_api_key);
 
 const lib = {
@@ -172,7 +172,8 @@ const lib = {
                 const percent = Math.round(
                     (100 / (totalResults / 50) * i));
                 if (totalResults > 50 && percent < 100) 
-                    await message.send(`processing... ${percent}%`);
+                    await message.send('processing... `' + percent +
+                        '%`');
                 items.forEach(elem => output.push(elem));
             }
             return resolve(output);

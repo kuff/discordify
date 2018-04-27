@@ -4,7 +4,7 @@ const { self_id } = require('../config.json');
 const { 
     default_volume, audio_passes, message_update_interval
 } = require('../settings.json');
-const { formatTime, setPresence, inVoice } = require('./util.js');
+const { formatTime, setPresence } = require('./util.js');
 const embeds = require('./embeds.js');
 const Message = require('./message.js');
 
@@ -45,8 +45,10 @@ module.exports = class Playback {
             this.connection = await voiceChannel.join();
         }
         
+        this.stream = await song.play(this.connection.channel
+            .bitrate);
         this.dispatcher = this.connection.playStream(
-            await song.play(this.connection.channel.bitrate), 
+            this.stream, 
             { 
                 volume: this.volume, 
                 passes: audio_passes, 
@@ -71,72 +73,45 @@ module.exports = class Playback {
             if (!this.playing) return;
             this.guard = this.play;
 
-            const method = async () => {
-                
-                if (this.connection.speaking === true) {
-                    setTimeout(method, 50);
-                    return;
+            const prev = this.queue.peek(this.queue.history);
+            if (prev && this.queue.size() == 0 && prev.flags
+            .indexOf('autoplay') != -1) {
+                if ((prev.flags.indexOf('loop') != -1 &&
+                reason === 'user') || prev.flags
+                .indexOf('loop') == -1) {
+                    await prev.message.sendNew('autoplaying...');
+                    prev.message = new Message(prev.message.obj);
                 }
-    
-                this.dispatcher = null;
-    
-                const prev = this.queue.peek(this.queue.history);
-                if (prev && this.queue.size() == 0 && prev.flags
-                .indexOf('autoplay') != -1) {
-                    if ((prev.flags.indexOf('loop') != -1 && 
-                    reason === 'user') || prev.flags
-                    .indexOf('loop') == -1) {
-                        await prev.message.sendNew('autoplaying...');
-                        prev.message = new Message(prev.message.obj);
-                    }
-                }
-    
-                this.play(reason === 'user');
-                //console.log('reason:', reason);
-
             }
-            method();
+
+            this.dispatcher = null;
+            this.play(reason === 'user');
+            //console.log('reason:', reason);
         });
 
         this.dispatcher.on('error', async error => {
             this.guard = this.play;
             await song.message.send(`An error occured during 
                 playback: ${error}`);
-            this.play();
+            this.dispatcher.end();
         });
     }
 
-    pause(message) {
-        if (!this.playing) return message.send(
-            'nothing is playing!');
-        if (this.dispatcher.paused) return message.send('playback' +
-            ' is already paused!');
-        if (this.guard) return message.send('another playback ' +
-            'command is being executed!');
+    pause() {
         this.dispatcher.pause();
     }
 
-    async resume(message) {
-        if (!this.playing) return message.send(
-            'nothing is playing!');
-        if (!this.dispatcher.paused) return message.send(
-            'playback is not paused!');
-        if (this.guard) 
-            return message.send('another playback command is ' +
-            'being executed!');
+    async resume() {
         this.guard = this.resume;
         await this.dispatcher.resume();
         this.guard = undefined;
     }
     
     async skip(message/*, amount = 1*/) {
-        // other guards here...
-        if (this.guard) 
-            return message.send('another playback command is ' +
-            'being executed!');
         this.guard = this.skip;
 
         //this.playing.message.delete();
+        this.stream.destroy();
 
         if (/*amount <= this.queue.size() &&*/ 
         this.queue.size() > 0) {
@@ -151,20 +126,6 @@ module.exports = class Playback {
     }
 
     setVolume(message, val) {
-        if (message) {
-            if (!this.playing) return message.send(
-                'nothing is playing!');
-            if (val && isNaN(val)) return message.send('provided' +
-                ' value must be a number!');
-            val = parseInt(val)
-            if (val && !Number.isInteger(val) || 
-            (val < 1 || val > 100))
-                return message.send('provided value must be ' +
-                    'an integer between 1 and 100!');
-            if (this.guard) 
-                return message.send('another playback command ' +
-                'is being executed!');
-        }
         if (val == this.volume) return;
         if (!val) {
             const vol = Math.round((this.volume / 
@@ -178,14 +139,7 @@ module.exports = class Playback {
         setPresence(this);
     }
 
-    end(message) {
-        // handle negative cases
-        if (!this.playing) return message.send(
-            'nothing is playing!');
-        if (this.guard) 
-            return message.send('another playback command is ' +
-            'being executed!');
-        // execute method body
+    end() {
         this.terminate();
     }
 
@@ -193,16 +147,15 @@ module.exports = class Playback {
         this.playing = undefined;
         this.connection.disconnect();
         this.connection = null;
+        this.dispatcher = null;
+        this.stream = null;
         this.queue.clear();
-        this.paused = false;
         this.volume = default_volume;
         setPresence(this);
         this.guard = null;
     }
 
     remaining(message) {
-        if (!this.playing) return message.send(
-            'nothing is playing!');
         message.send(embeds.remaining(this));
     }
 

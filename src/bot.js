@@ -48,8 +48,8 @@ client.on('message', async message => {
 
         case 'help':
         case 'h':
+            await message.author.send(embeds.help());
             message.send('sent help!');
-            message.author.send(embeds.help());
             break;
 
         case 'ping':
@@ -63,6 +63,8 @@ client.on('message', async message => {
         case 'song':
         case 's':
             // handle negative cases...
+            if (!params[0]) return message.send('you must ' +
+                'provide something to play!');
             if (!pb.playing && !message.obj.member.voiceChannel)
                 return message.send('you must be in a voice ' +
                 'channel in order to issue playback commands!');
@@ -73,8 +75,8 @@ client.on('message', async message => {
 
             // fetch request and return if unsuccessful
             const result = await f.get(params, message);
-            if (!result) return;
-            console.log('fetched:', result);
+            if (!result) return console.log('song: found nothing');
+            console.log('song:', result.link);
 
             // remember the current queue length for use in
             // queued embed
@@ -91,40 +93,92 @@ client.on('message', async message => {
                 return pb.play();
             message.send(embeds.queued(pb, result, 
                 queue_length));
-
             break;
 
         case 'pause':
         case 'p':
-            pb.pause(message);
+            if (!pb.playing) return message.send(
+                'nothing is playing!');
+            if (!inVoice(message.obj.member)) return message.send(
+                'you must be in the same voice channel as me in ' +
+                'order to use `' + prefix + 'pause`!');
+            if (pb.dispatcher.paused) return message.send('playback' +
+                ' is already paused!');
+            if (pb.guard) return message.send('another playback ' +
+                'command is being executed!');
+            pb.pause();
             break;
 
         case 'unpause':
         case 'resume':
         case 'up':
-            pb.resume(message);
+            if (!pb.playing) return message.send(
+                'nothing is playing!');
+            if (!inVoice(message.obj.member)) return message.send(
+                'you must be in the same voice channel as me in ' +
+                'order to use `' + prefix + 'unpause`!');
+            if (!pb.dispatcher.paused) return message.send(
+                'playback is not paused!');
+            if (pb.guard)
+                return message.send('another playback command is ' +
+                    'being executed!');
+            pb.resume();
             break;
 
         case 'skip':
         case 'next':
+            if (!pb.playing) return message.send(
+                'nothing is playing!');
+            if (!inVoice(message.obj.member)) return message.send(
+                'you must be in the same voice channel as me in ' +
+                'order to use `' + prefix + 'skip`!');
+            if (pb.guard)
+                return message.send('another playback command is ' +
+                    'being executed!');
             pb.skip(message);
             break;
 
         case 'volume':
         case 'vol':
-            pb.setVolume(message, params[0]);
+            if (!pb.playing) return message.send(
+                'nothing is playing!');
+            if (!inVoice(message.obj.member)) return message.send(
+                'you must be in the same voice channel as me in ' +
+                'order to use `' + prefix + 'vol`!');
+            let val = params[0];
+            if (val && isNaN(val)) return message.send('provided' +
+                ' value must be a number!');
+            val = parseInt(val)
+            if (val && (!Number.isInteger(val) ||
+                (val < 1 || val > 100)))
+                return message.send('provided value must be ' +
+                    'an integer between 1 and 100!');
+            if (pb.guard)
+                return message.send('another playback command ' +
+                    'is being executed!');
+            pb.setVolume(message, val);
             break;
 
         case 'remaining':
         case 'playing':
         case 'left':
         case 'queue':
+            if (!pb.playing) return message.send(
+                'nothing is playing!');
             pb.remaining(message);
             break;
 
         case 'end':
         case 'stop':
-            pb.end(message);
+            if (!pb.playing) return message.send(
+                'nothing is playing!');
+            if (!inVoice(message.obj.member)) return message.send(
+                'you must be in the same voice channel as me in ' +
+                'order to use `' + prefix + 'stop`!');
+            if (pb.guard)
+                return message.send('another playback command is ' +
+                    'being executed!');
+            pb.end();
             break;
 
         /** for version 1.1.0 */
@@ -138,8 +192,9 @@ client.on('message', async message => {
 
         /*
         case 'recent':
-        case 'previous':
         case 'history':
+        case 'previous':
+        case 'prev':
             // the last five songs played are...
             break;
         */

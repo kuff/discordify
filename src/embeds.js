@@ -9,7 +9,7 @@ module.exports = {
             embed: {
                 color: embed_color,
                 footer: {
-                    text: `Discordify v${version} (beta) • A heatbeat is sent every 45 seconds`
+                    text: `This bot is running Discordify v${version} (beta)`
                 },
                 fields: [
                     {
@@ -80,6 +80,8 @@ module.exports = {
         const client = instance.client;
         const queue = instance.queue;
         const playing = instance.playing;
+        const remaining = formatTime(instance.playing.duration - 
+            (Math.round(instance.dispatcher.time / 1000)));
         
         let duration
         let songs;
@@ -112,15 +114,17 @@ module.exports = {
                 color: embed_color,
                 footer: {
                     icon_url: playing.message.author.avatarURL,
-                    text: `Currently playing ${playing.title} 
-                        by ${playing.artist}`
+                    text: `Currently playing "${playing.title}" 
+                        ${queue.peek() !== song
+                        ? ` with ${remaining} remaining`
+                        : ` by ${playing.artist}`}`
                 },
                 thumbnail: {
                     url: song.thumbnail
                 },
                 author: {
                     name: `Queued ${songs ? `${songs.length} 
-                        items, starting with:` : 'an item:'}`
+                        items, including:` : 'an item:'}`
                 },
                 fields: [
                     {
@@ -267,7 +271,7 @@ module.exports = {
                     },
                     {
                         name: '`' + prefix + 'end`',
-                        value: 'End playback\n\n' +
+                        value: 'Ends playback\n\n' +
                             '       **aliases:** `stop`\n' +
                             '       **conditions:** you must be in the same voice channel as the bot and it has to be\n       playing or paused\n~'
                     }
