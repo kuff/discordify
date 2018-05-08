@@ -45,56 +45,68 @@ module.exports = class Playback {
             this.connection = await voiceChannel.join();
         }
         
-        this.stream = await song.play(this.connection.channel
-            .bitrate);
-        this.dispatcher = this.connection.playStream(
-            this.stream, 
-            { 
-                volume: this.volume, 
-                passes: audio_passes, 
-                bitrate: 'auto' 
-            }
-        );
-        this.connection.player.streamingData.pausedTime = 0;
-
-        this.dispatcher.on('debug', message => console.log(
-            'Stream dispatcher:', message
-        ));
-
-        this.dispatcher.on('start', async () => {
-            if (!first && song.message.author.id != self_id) 
-                await song.message.sendNew(embeds.playing(this));
-            else await song.message.send(embeds.playing(this));
-            setPresence(this);
-            this.guard = undefined;
-        });
-
-        this.dispatcher.on('end', async reason => {
-            if (!this.playing) return;
-            this.guard = this.play;
-
-            const prev = this.queue.peek(this.queue.history);
-            if (prev && this.queue.size() == 0 && prev.flags
-            .indexOf('autoplay') != -1) {
-                if ((prev.flags.indexOf('loop') != -1 &&
-                reason === 'user') || prev.flags
-                .indexOf('loop') == -1) {
-                    await prev.message.sendNew('autoplaying...');
-                    prev.message = new Message(prev.message.obj);
+        song.play(this.connection.channel.bitrate).then(stream => {
+            this.stream = stream;
+            this.dispatcher = this.connection.playStream(
+                this.stream, 
+                { 
+                    volume: this.volume, 
+                    passes: audio_passes, 
+                    bitrate: 'auto' 
                 }
-            }
-
-            this.dispatcher = null;
-            this.play(reason === 'user');
-            //console.log('reason:', reason);
+            );
+            this.connection.player.streamingData.pausedTime = 0;
+    
+            this.dispatcher.on('debug', message => console.log(
+                'Stream dispatcher:', message
+            ));
+    
+            this.dispatcher.on('start', async () => {
+                if (!first && song.message.author.id != self_id) 
+                    await song.message.sendNew(embeds.playing(this));
+                else await song.message.send(embeds.playing(this));
+                setPresence(this);
+                this.guard = undefined;
+            });
+    
+            this.dispatcher.on('end', async reason => {
+                if (!this.playing) return;
+                this.guard = this.play;
+    
+                const prev = this.queue.peek(this.queue.history);
+                if (prev && this.queue.size() == 0 && prev.flags
+                .indexOf('autoplay') != -1) {
+                    if ((prev.flags.indexOf('loop') != -1 &&
+                    reason === 'user') || prev.flags
+                    .indexOf('loop') == -1) {
+                        await prev.message.sendNew('autoplaying...');
+                        prev.message = new Message(prev.message.obj);
+                    }
+                }
+    
+                this.dispatcher = null;
+                this.play(reason === 'user');
+                console.log('Dispatcher ended by:', reason);
+            });
+    
+            this.dispatcher.on('error', async error => {
+                this.guard = this.play;
+                await song.message.send(`An error occured during 
+                    playback: ${error}`);
+                this.dispatcher.end();
+            });
+        })
+        .catch(error => {
+            console.log('Error in playback stream:', error);
+            this.playing.message.sendNew('the following song did ' +
+                `not play due to copyright restrictions: 
+                "${this.playing.title}" by ${this.playing.artist}.` +
+                this.queue.size() > 0 
+                ? ' Playing next item in queue...'
+                : '');
+            this.play(true);
         });
-
-        this.dispatcher.on('error', async error => {
-            this.guard = this.play;
-            await song.message.send(`An error occured during 
-                playback: ${error}`);
-            this.dispatcher.end();
-        });
+        
     }
 
     pause() {
@@ -139,10 +151,6 @@ module.exports = class Playback {
         setPresence(this);
     }
 
-    end() {
-        this.terminate();
-    }
-
     terminate() {
         this.playing = undefined;
         this.connection.disconnect();
@@ -163,12 +171,12 @@ module.exports = class Playback {
         // add up total queue time
         let containsLivestream = queue === this.queue.queue ? 
             this.playing.duration == 0 : false;
-        let total = queue.reduce((time, elem) => {
+        let total = queue.reduce((time, elem) => { // use arr.sum()?
             if (elem.duration == 0) containsLivestream = true;
             return time += elem.duration;
         }, 0);
         // add remaining duration of song currently playing
-        if (queue === this.queue.queue)
+        if (this.dispatcher && queue === this.queue.queue)
             total += Math.round(this.playing.duration -
                 (this.dispatcher.time / 1000));
         // finally, return result
