@@ -80,8 +80,11 @@ module.exports = {
         const client = instance.client;
         const queue = instance.queue;
         const playing = instance.playing;
-        const remaining = formatTime(instance.playing.duration - 
-            (Math.round(instance.dispatcher.time / 1000)));
+        const dispatcher = instance.dispatcher
+            ? instance.dispatcher
+            : { time: 0 };
+        const remaining = formatTime(playing.duration - 
+            (Math.round(dispatcher.time / 1000)));
         
         let duration
         let songs;
@@ -97,11 +100,11 @@ module.exports = {
 
         if (queue.peek() === song) {
             if (playing.duration > 0) queue_length = formatTime(
-                Math.round(playing.duration - (instance.dispatcher
+                Math.round(playing.duration - (dispatcher
                 .time / 1000)));
             else queue_length = '∞';
         }
-        if (instance.dispatcher.paused) queue_length += ' (paused)';
+        if (dispatcher.paused) queue_length += ' (paused)';
         else if (queue_size > 1) queue_length += ` (${queue_size
             } items)`;
 
@@ -149,9 +152,11 @@ module.exports = {
         const client = instance.client;
         const queue = instance.queue;
         const playing = instance.playing;
-        const time_played = formatTime(Math.round(instance
-            .dispatcher.time / 1000)) + 
-            (instance.dispatcher.paused ? ' (paused)' : '');
+        const dispatcher = instance.dispatcher
+            ? instance.dispatcher
+            : { time: 0 };
+        const time_played = formatTime(Math.round(dispatcher.time
+            / 1000)) + (dispatcher.paused ? ' (paused)' : '');
 
         // generate embed
         const embed = {
@@ -182,8 +187,7 @@ module.exports = {
                         value: "`" + (playing.duration == 0
                             ? "∞"
                             : formatTime(Math.round(playing
-                                .duration - instance.dispatcher
-                                .time / 1000))
+                                .duration - dispatcher.time / 1000))
                         ) + "`",
                         inline: true
                     }
@@ -206,9 +210,11 @@ module.exports = {
         return embed;
     },
 
-    help: () => {
+    help: message => {
         return {
             embed: {
+                title: 'Link to source code',
+                url: 'https://github.com/kuff/discordify',
                 color: embed_color,
                 author: {
                     name: 'Help has arrived!'
@@ -216,6 +222,11 @@ module.exports = {
                 description: 'Following is a list of all ' +
                     'available commands, explaining how to use ' +
                     'them and what they do.',
+                footer: {
+                    text: `Sent from #${message.obj.channel.name} 
+                        in ${message.obj.guild.name} by Discordify 
+                        v${version} (beta)`
+                },
                 fields: [
                     {
                         name: '`' + prefix + 'help`',
@@ -231,7 +242,7 @@ module.exports = {
                             '       **aliases:** `latency`, `measure`\n~'
                     },
                     {
-                        name: '`' + prefix + 'play <params> -flags?`',
+                        name: '`' + prefix + 'play <params> --flags?`',
                         value: 'Attempts to fetch the song given ' +
                             'as a parameter and initiate playback' +
                             ' if not already playing, else adding' +
@@ -254,7 +265,7 @@ module.exports = {
                     {
                         name: '`' + prefix + 'resume`',
                         value: 'Resumes playback\n\n' +
-                            '       **aliases:** `unpause`, `up`\n' +
+                            '       **aliases:** `start`, `unpause`, `up`\n' +
                             '       **conditions:** you must be in the same voice channel as the bot and playback has\n       to be paused\n~'
                     },
                     {

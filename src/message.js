@@ -1,7 +1,6 @@
 'use strict'
 
 const { self_id } = require('../config.json');
-const embeds = require('./embeds.js');
 
 module.exports = class Message {
 

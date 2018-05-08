@@ -14,7 +14,8 @@ let f = new Fetcher(q);
 let pb = new Player(client, q);
 
 client.on('ready', () => {
-    console.log('I\'m ready!');
+    console.log(`${client.user.username}#${client.user
+        .discriminator} is up and running!`);
     setPresence(pb);
 });
 
@@ -29,8 +30,8 @@ client.on('message', async message => {
         .slice(prefix.length);
     const args = params.reduce((prev, elem, i) => {
         // this can probably be improved
-        if (elem.startsWith('-')) {
-            prev.push(elem.slice(1));
+        if (elem.startsWith('--')) {
+            prev.push(elem.slice(2));
             params[i] = undefined;
         }
         return prev;
@@ -48,7 +49,7 @@ client.on('message', async message => {
 
         case 'help':
         case 'h':
-            await message.author.send(embeds.help());
+            await message.author.send(embeds.help(message));
             message.send('sent help!');
             break;
 
@@ -64,19 +65,22 @@ client.on('message', async message => {
         case 's':
             // handle negative cases...
             if (!params[0]) return message.send('you must ' +
-                'provide something to play!');
+                'specify something to play, see `' + prefix + 
+                '` for more!');
+            if (pb.playing && !inVoice(message.obj.member))
+                return message.send('you must be in the same ' +
+                    'voice channel as me in order to issue ' +
+                    'playback commands!');
             if (!pb.playing && !message.obj.member.voiceChannel)
                 return message.send('you must be in a voice ' +
                 'channel in order to issue playback commands!');
-            if (pb.playing && !inVoice(message.obj.member))
-                return message.send('you must be in the same ' +
-                'voice channel as me in order to issue ' +
-                'playback commands!');
 
             // fetch request and return if unsuccessful
             const result = await f.get(params, message);
             if (!result) return console.log('song: found nothing');
-            console.log('song:', result.link);
+            console.log('song:', Array.isArray(result)
+                ? `${result.length} items fetched`
+                : `fetched ${result.link}`);
 
             // remember the current queue length for use in
             // queued embed
@@ -89,8 +93,10 @@ client.on('message', async message => {
             // play the first song in queue if nothing is play-
             // ing, else notify the user that their song request
             // was queued
-            if (!pb.playing)
+            if (!pb.playing) {
+                console.log('Now playing!');
                 return pb.play();
+            }
             message.send(embeds.queued(pb, result, 
                 queue_length));
             break;
@@ -111,6 +117,7 @@ client.on('message', async message => {
 
         case 'unpause':
         case 'resume':
+        case 'start':
         case 'up':
             if (!pb.playing) return message.send(
                 'nothing is playing!');
@@ -144,7 +151,7 @@ client.on('message', async message => {
                 'nothing is playing!');
             if (!inVoice(message.obj.member)) return message.send(
                 'you must be in the same voice channel as me in ' +
-                'order to use `' + prefix + 'vol`!');
+                'order to use `' + prefix + 'volume`!');
             let val = params[0];
             if (val && isNaN(val)) return message.send('provided' +
                 ' value must be a number!');
@@ -178,13 +185,14 @@ client.on('message', async message => {
             if (pb.guard)
                 return message.send('another playback command is ' +
                     'being executed!');
-            pb.end();
+            pb.terminate();
             break;
 
         /** for version 1.1.0 */
 
         /*
         case 'replay':
+        case 'rp':
             // replay history.pop(), if undefined replay current
             // song...
             break;
@@ -221,13 +229,17 @@ client.on('message', async message => {
 client.on('voiceStateUpdate', member => {
 
     if (member.voiceChannel != undefined) {
-        const map = member.voiceChannel.members;
-        if (pb.playing && map.size == 1 && inVoice(member)) {
-            // Disconnect from voice chat if no one's listening
+        // get all connected members
+        let members = member.voiceChannel.members;
+        // ignore bot members
+        members = members.filter(elem => !elem.user.bot || 
+            elem.id === self_id);
+        // disconnect from voice chat if no one's listening
+        if (pb.playing && members.size == 1 && inVoice(member)) {
             pb.terminate();
         }
     }
 
-})
+});
 
 client.login(token);
