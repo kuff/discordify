@@ -172,6 +172,7 @@ module.exports = class Playback {
         let containsLivestream = queue === this.queue.queue ? 
             this.playing.duration == 0 : false;
         let total = queue.reduce((time, elem) => { // use arr.sum()?
+            if (!elem) return 0;
             if (elem.duration == 0) containsLivestream = true;
             return time += elem.duration;
         }, 0);
@@ -180,8 +181,8 @@ module.exports = class Playback {
             total += Math.round(this.playing.duration -
                 (this.dispatcher.time / 1000));
         // finally, return result
-        if (containsLivestream)
-            return '∞';
+        if (containsLivestream || this.playing.flags.indexOf('loop')
+            != -1) return '∞';
         return formatTime(total);
     }
 
