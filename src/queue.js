@@ -35,8 +35,8 @@ module.exports = class Queue {
         if (prev) {
             if (prev.flags && prev.flags.indexOf('loop') != -1 && 
             !skipped) {
-                this.queue.unshift(song);
-                song = prev;
+                if (song) this.queue.unshift(song);
+                song = prev ? prev : song;
             }
             else if (!song && prev.flags && 
             prev.flags.indexOf('autoplay') != -1) {

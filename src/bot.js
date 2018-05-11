@@ -242,4 +242,26 @@ client.on('voiceStateUpdate', member => {
 
 });
 
-client.login(token);
+client.login(token).then(() => { // sign in as bot user
+
+    const guild = client.guilds.first();
+    const voiceChannel = guild.me.voiceChannel;
+    // if the bot is connected to a voice channel right after 
+    // booting up, it means it crashed and rebooted, which we will
+    // then inform the user
+    if (voiceChannel) {
+        // find suitible text channels, to inform the user(s) 
+        // through, meaning text channels where the bot has read-
+        // and write permissions
+        const textChannels = guild.channels
+            .filter(channel => channel.permissionsFor(guild.me)
+                .has('READ_MESSAGES') && channel
+                .permissionsFor(guild.me).has('READ_MESSAGES') &&
+                channel.type === 'text');
+        // finally, send the message to the first valid channel
+        textChannels.first().send('Oops, It would appear ' +
+            'Discordify crashed during playback! (And rebooted ' +
+            'successfully)');
+    }
+    
+});

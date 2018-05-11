@@ -154,14 +154,27 @@ it('Dequeues By Looping', async done => {
     const hist = queue.history;
     expect(queue.history.length)
         .toEqual(5);
+
     expect(await queue.dequeue())
         .toEqual({ song: 'a song', flags: ['loop'] });
     expect(queue.history)
         .toEqual(hist);
+    expect(queue.queue[0])
+        .toEqual({
+            song: 'another song',
+            flags: ['loop', 'autoplay']
+        });
+
     expect(await queue.dequeue())
         .toEqual({ song: 'a song', flags: ['loop'] });
     expect(queue.history)
         .toEqual(hist);
+    expect(queue.queue[0])
+        .toEqual({
+            song: 'another song',
+            flags: ['loop', 'autoplay']
+        });
+
     expect(await queue.dequeue(true))
         .toEqual({ song: 'another song', 
             flags: ['loop', 'autoplay'] });
@@ -171,6 +184,13 @@ it('Dequeues By Looping', async done => {
         .toEqual({ song: 'another song', 
             flags: ['loop', 'autoplay'] }
         );
+    expect(queue.queue[0])
+        .toHaveProperty('this', 'must be an object');
+    expect(queue.queue[0])
+        .toHaveProperty('related');
+    expect(queue.queue[0])
+        .toHaveProperty('flags', ['loop', 'autoplay']);
+
     expect(await queue.dequeue())
         .toEqual({ song: 'another song', 
             flags: ['loop', 'autoplay'] }
@@ -181,6 +201,13 @@ it('Dequeues By Looping', async done => {
         .toEqual({ song: 'another song',
             flags: ['loop', 'autoplay'] }
         );
+    expect(queue.queue[0])
+        .toHaveProperty('this', 'must be an object');
+    expect(queue.queue[0])
+        .toHaveProperty('related');
+    expect(queue.queue[0])
+        .toHaveProperty('flags', ['loop', 'autoplay']);
+
     let item = await queue.dequeue(true)
     expect(item)
         .toHaveProperty('this', 'must be an object');
@@ -199,6 +226,8 @@ it('Dequeues By Looping', async done => {
     expect(queue.history[4])
         .toHaveProperty('this');
     done();
+    expect(queue.queue[0])
+        .toEqual(undefined);
 });
 
 it('Autoplays After End Loop Without Looping', async done => {
