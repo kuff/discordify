@@ -73,6 +73,8 @@ module.exports = {
                     queue.size() > 1 ? 's' : ''
                 } in queue • ${instance.queueTime()} queue time`;
         }
+        if (song.flags.indexOf('loop') != -1) embed.embed.author
+            .name += ' (looping)';
         return embed;
     },
 
@@ -98,12 +100,12 @@ module.exports = {
         const new_songs = songs ? songs.length : 1;
         const queue_size = queue.size() - new_songs + 1;
 
-        
-        if (playing.duration > 0 && 
-        playing.flags.indexOf('loop') == -1) 
-            queue_length = formatTime(Math.round(
-                playing.duration - (dispatcher.time / 1000)));
-        else queue_length = '∞';
+        if (queue.peek() === song && queue_length !== '∞') {
+            if (playing.duration > 0)
+                queue_length = formatTime(Math.round(
+                    playing.duration - (dispatcher.time / 1000)));
+            else queue_length = '∞';
+        }
 
         if (dispatcher.paused) queue_length += ' (paused)';
         else if (queue_size > 1) queue_length += ` (${queue_size
