@@ -84,8 +84,8 @@ client.on('message', async message => {
 
             // remember the current queue length for use in
             // queued embed
-            let queue_length;
-            if (pb.playing) queue_length = pb.queueTime();
+            let queue_length = pb.queueTime();
+            console.log(queue_length);
 
             // enqueue fetched song(s)
             q.enqueue(result, args);
@@ -250,6 +250,9 @@ client.login(token).then(() => { // sign in as bot user
     // booting up, it means it crashed and rebooted, which we will
     // then inform the user
     if (voiceChannel) {
+        // disconnect from the voice channel
+        voiceChannel.join().then(connection => 
+            connection.disconnect());
         // find suitible text channels, to inform the user(s) 
         // through, meaning text channels where the bot has read-
         // and write permissions

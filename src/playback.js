@@ -168,6 +168,7 @@ module.exports = class Playback {
     }
 
     queueTime(queue = this.queue.queue) {
+        if (!this.playing) return '0';
         // add up total queue time
         let containsLivestream = queue === this.queue.queue ? 
             this.playing.duration == 0 : false;
@@ -178,11 +179,12 @@ module.exports = class Playback {
         }, 0);
         // add remaining duration of song currently playing
         if (this.dispatcher && queue === this.queue.queue)
+            if (this.playing.duration == 0 || this.playing.flags
+            .indexOf('loop') != -1) return '∞';
             total += Math.round(this.playing.duration -
                 (this.dispatcher.time / 1000));
         // finally, return result
-        if (containsLivestream || this.playing.flags.indexOf('loop')
-            != -1) return '∞';
+        if (containsLivestream) return '∞';
         return formatTime(total);
     }
 
