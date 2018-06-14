@@ -85,7 +85,6 @@ client.on('message', async message => {
             // remember the current queue length for use in
             // queued embed
             let queue_length = pb.queueTime();
-            console.log(queue_length);
 
             // enqueue fetched song(s)
             q.enqueue(result, args);
@@ -93,10 +92,7 @@ client.on('message', async message => {
             // play the first song in queue if nothing is play-
             // ing, else notify the user that their song request
             // was queued
-            if (!pb.playing) {
-                console.log('Now playing!');
-                return pb.play();
-            }
+            if (!pb.playing) return pb.play();
             message.send(embeds.queued(pb, result, 
                 queue_length));
             break;
@@ -258,9 +254,10 @@ client.login(token).then(() => { // sign in as bot user
         // and write permissions
         const textChannels = guild.channels
             .filter(channel => channel.permissionsFor(guild.me)
-                .has('READ_MESSAGES') && channel
-                .permissionsFor(guild.me).has('READ_MESSAGES') &&
-                channel.type === 'text');
+                .has('READ_MESSAGES') 
+                && channel.permissionsFor(guild.me)
+                    .has('SEND_MESSAGES')
+                && channel.type === 'text');
         // finally, send the message to the first valid channel
         textChannels.first().send('Oops, It would appear ' +
             'Discordify crashed during playback! (And rebooted ' +

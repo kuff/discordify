@@ -16,27 +16,30 @@ const lib = {
             super(args);
         }
     
-        async play(bitrate = 64) {
-            const info = await ytdl.getInfo(this.link);
-            
-            let formats = ytdl.filterFormats(info.formats, 
-                'audioonly');
-            if (this.duration == 0)
+        play(bitrate = 64) {
+            return new Promise(async (resolve, reject) => {
+                const info = await ytdl.getInfo(this.link);
+                
+                let formats = ytdl.filterFormats(info.formats, 
+                    'audioonly');
+                if (this.duration == 0)
+                    formats = ytdl.filterFormats(info.formats, format =>
+                        format.itag > 90 && format.itag < 96);
+                let prevFormats = formats;
+                formats = ytdl.filterFormats(info.formats, format => 
+                    format.audioBitrate == bitrate);
+                if (formats.length == 0)
+                    formats = prevFormats;
+                else prevFormats = formats;
                 formats = ytdl.filterFormats(info.formats, format =>
-                    format.itag > 90 && format.itag < 96);
-            let prevFormats = formats;
-            formats = ytdl.filterFormats(info.formats, format => 
-                format.audioBitrate == bitrate);
-            if (formats.length == 0)
-                formats = prevFormats;
-            else prevFormats = formats;
-            formats = ytdl.filterFormats(info.formats, format =>
-                format.audioEncoding === 'opus');
-            if (formats.length == 0)
-                formats = prevFormats;
-            
-            return ytdl(this.link, { filter: format =>
-                format.itag === formats[0].itag });
+                    format.audioEncoding === 'opus');
+                if (formats.length == 0)
+                    formats = prevFormats;
+                
+                if (!formats[0]) return reject()
+                resolve( ytdl(this.link, { filter: format =>
+                    format.itag === formats[0].itag }));
+            });
         }
     
         related(history = []) {

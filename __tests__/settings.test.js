@@ -18,6 +18,8 @@ it('Recognizes Setting', () => {
     console.log('audio_passes:', settings.audio_passes);
 });
 
-/*it('Is Given Settings Variables With Acceptable Values', () => {
+/*
+it('Is Given Settings Variables With Acceptable Values', () => {
     // ...
-});*/
+});
+*/

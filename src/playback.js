@@ -57,11 +57,8 @@ module.exports = class Playback {
             );
             this.connection.player.streamingData.pausedTime = 0;
     
-            this.dispatcher.on('debug', message => console.log(
-                'Stream dispatcher:', message
-            ));
-    
             this.dispatcher.on('start', async () => {
+                console.log('Now playing:', song.link);
                 if (!first && song.message.author.id != self_id) 
                     await song.message.sendNew(embeds.playing(this));
                 else await song.message.send(embeds.playing(this));
@@ -73,6 +70,7 @@ module.exports = class Playback {
                 if (!this.playing) return;
                 this.guard = this.play;
     
+                // logic for autoplaying message
                 const prev = this.queue.peek(this.queue.history);
                 if (prev && this.queue.size() == 0 && prev.flags
                 .indexOf('autoplay') != -1) {
@@ -91,19 +89,19 @@ module.exports = class Playback {
     
             this.dispatcher.on('error', async error => {
                 this.guard = this.play;
-                await song.message.send(`An error occured during 
-                    playback: ${error}`);
+                await this.playing.message.sendNew(
+                    `An error occured during playback: ${error}`);
                 this.dispatcher.end();
             });
         })
         .catch(error => {
             console.log('Error in playback stream:', error);
-            this.playing.message.sendNew('the following song did ' +
-                `not play due to copyright restrictions: 
-                "${this.playing.title}" by ${this.playing.artist}.` +
-                this.queue.size() > 0 
+            this.playing.message.send('the following song did ' +
+                'not play due to copyright restrictions: ' +
+                `"${this.playing.title}" by ${this.playing.artist}.`
+                + (this.queue.size() > 0 
                 ? ' Playing next item in queue...'
-                : '');
+                : ''));
             this.play(true);
         });
         
@@ -168,7 +166,7 @@ module.exports = class Playback {
     }
 
     queueTime(queue = this.queue.queue) {
-        if (!this.playing) return '0';
+        if (!this.playing) return '0:00';
         // add up total queue time
         let containsLivestream = queue === this.queue.queue ? 
             this.playing.duration == 0 : false;
@@ -178,11 +176,13 @@ module.exports = class Playback {
             return time += elem.duration;
         }, 0);
         // add remaining duration of song currently playing
-        if (this.dispatcher && queue === this.queue.queue)
+        if (this.dispatcher && queue === this.queue.queue) {
+            const time = this.dispatcher.time;
             if (this.playing.duration == 0 || this.playing.flags
             .indexOf('loop') != -1) return '∞';
             total += Math.round(this.playing.duration -
-                (this.dispatcher.time / 1000));
+                (time / 1000));
+        }
         // finally, return result
         if (containsLivestream) return '∞';
         return formatTime(total);
