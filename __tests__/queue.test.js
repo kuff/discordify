@@ -353,7 +353,7 @@ it('Randomly Shuffles Songs When Enqueued With "Shuffle"', () => {
         .toBe(true);
 });
 
-it('Enqueues Songs Flagged With "Now"', () => {
+it('Enqueues Songs Flagged With "next"', () => {
     queue = new Queue();
     queue.enqueue({ song: 'a song'}, [ 'next' ]);
     expect(queue.queue)

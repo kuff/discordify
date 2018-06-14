@@ -245,7 +245,7 @@ module.exports = {
                             '       **aliases:** `latency`, `measure`\n~'
                     },
                     {
-                        name: '`' + prefix + 'play <params> --flags?`',
+                        name: '`' + prefix + 'play <params> --<flags?>`',
                         value: 'Attempts to fetch the song given ' +
                             'as a parameter and initiate playback' +
                             ' if not already playing, else adding' +
