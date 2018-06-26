@@ -66,7 +66,7 @@ module.exports = class Queue {
 
     clear() {
         this.queue = [];
-        this.history = [];
+        //this.history = [];
     }
 
 }
