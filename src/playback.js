@@ -31,8 +31,9 @@ module.exports = class Playback {
         this.playing = song;
 
         if (!this.connection) {
-            const voiceChannel = song.message.author.lastMessage
-                .member.voiceChannel;
+            const user = song.message.author
+            const voiceChannel = user.lastMessage.member
+                .voiceChannel;
             if (!voiceChannel) {
                 song.message.send('your request will not be played' +
                     ' because you disconnected from the voice ' +
@@ -117,22 +118,49 @@ module.exports = class Playback {
         this.guard = undefined;
     }
     
-    async skip(message/*, amount = 1*/) {
+    async skip(message) {
         this.guard = this.skip;
 
         //this.playing.message.delete();
         this.stream.destroy();
 
-        if (/*amount <= this.queue.size() &&*/ 
-        this.queue.size() > 0) {
+        if (message && this.queue.size() > 0) {
             await message.send('skipping...');
             this.queue.queue[0].message.obj = message.obj;
-            /*const promises = [];
-            for (let i = 1; i < amount; i++)
-                promises.push(this.queue.dequeue(true));
-            await Promise.all(promises); // marginal performance*/
-        }                                // gain if any at all
+        }
         this.dispatcher.end();
+    }
+
+    async replay(message, args) {
+        let item = this.queue.history.pop();
+        if (this.playing) {
+            if (this.dispatcher.time < 6000) {
+                await message.send('replaying previous item...');
+                item = this.queue.history.pop();
+            }
+            else await message.send('replaying current item...');
+        }
+        else await message.send('replaying previous item...');
+        if (!item) return message.send('I don\'t remember what '
+            + 'played before this!');
+        
+        args.push('next');
+        this.queue.enqueue(item, args);
+        this.queue.queue[0].message = message;
+        if (this.playing) this.skip();
+        else this.play();
+    }
+
+    addFlag(flag, message, apply_on_queue = false) {
+        const item = this.queue.history[this.queue.history
+            .length - 1];
+        if (item.flags.indexOf(flag) != -1) return message.send(
+            'item already has the `' + flag + '` attribute!');
+        if (apply_on_queue) this.queue.queue.forEach(elem => 
+            elem.flags.push(flag));
+        else item.flags.push(flag);
+        message.send('added `' + flag + '` functionality to '
+            + 'the queue!');
     }
 
     setVolume(message, val) {
@@ -188,17 +216,7 @@ module.exports = class Playback {
         return formatTime(total);
     }
 
-    /** for version 1.1.0 */
-
-    /*
-    replay(message) {
-        // handle negative cases
-        if (this.guard) return message.send('another playback ' +
-            'command is being executed!');
-        // execute method body
-        // ...
-    }
-    */
+    /** for version 1.2.0 */
     
     /*
     jump(message, seconds) {

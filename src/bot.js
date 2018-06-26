@@ -184,15 +184,43 @@ client.on('message', async message => {
             pb.terminate();
             break;
 
-        /** for version 1.1.0 */
-
-        /*
         case 'replay':
         case 'rp':
-            // replay history.pop(), if undefined replay current
-            // song...
+            if (!inVoice(message.obj.member) && pb.playing) 
+                return message.send('you must be in the same voice'
+                + ' channel as me in order to use `' + prefix 
+                + 'replay`!');
+            if (pb.guard)
+                return message.send('another playback command is ' +
+                    'being executed!');
+            pb.replay(message, args);
             break;
-        */
+        
+        case 'loop':
+            if (!pb.playing) return message.send(
+                'nothing is playing!');
+            if (!inVoice(message.obj.member)) return message.send(
+                'you must be in the same voice channel as me in ' +
+                'order to use `' + prefix + 'loop`!');
+            if (pb.guard)
+                return message.send('another playback command is ' +
+                    'being executed!');
+            pb.addFlag('loop', message);
+            break;
+        
+        case 'autoplay':
+            if (!pb.playing) return message.send(
+                'nothing is playing!');
+            if (!inVoice(message.obj.member)) return message.send(
+                'you must be in the same voice channel as me in ' +
+                'order to use `' + prefix + 'autoplay`!');
+            if (pb.guard)
+                return message.send('another playback command is ' +
+                    'being executed!');
+            pb.addFlag('autoplay', message, true);
+            break;
+
+        /** for version 1.2.0 */
 
         /*
         case 'recent':
