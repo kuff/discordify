@@ -158,7 +158,7 @@ module.exports = class Playback {
             'item already has the `' + flag + '` attribute!');
         if (apply_on_queue) this.queue.queue.forEach(elem => 
             elem.flags.push(flag));
-        else item.flags.push(flag);
+        item.flags.push(flag);
         message.send('added `' + flag + '` functionality to '
             + 'the queue!');
     }

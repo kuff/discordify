@@ -1,6 +1,6 @@
 const { version } = require('../package.json');
 const { embed_color, prefix } = require('../settings.json');
-const { formatPlays, formatTime } = require('./util.js');
+const { formatTime } = require('./util.js');
 
 module.exports = {
 
@@ -152,7 +152,6 @@ module.exports = {
     },
     
     remaining: instance => {
-        const client = instance.client;
         const queue = instance.queue;
         const playing = instance.playing;
         const dispatcher = instance.dispatcher
@@ -282,6 +281,22 @@ module.exports = {
                         value: 'Retrieves som info on the song currently playing as well as the queue\n\n' +
                             '       **aliases:** `playing`, `left`, `queue`\n' +
                             '       **conditions:** you must be in the same voice channel as the bot and it has to be\n       playing or paused\n~'
+                    },
+                    {
+                        name: '`' + prefix + 'replay`',
+                        value: 'Replays the last song played, even if playback has ended\n\n' +
+                            '       **aliases:** `rp`\n' +
+                            '       **conditions:** you must be in the same voice channel as the bot and a song must\'ve\n       played before\n~'
+                    },
+                    {
+                        name: '`' + prefix + 'loop`',
+                        value: 'loops the song currently playing, skippable with `' + prefix + 'skip`\n\n' +
+                        '       **conditions:** you must be in the same voice channel as the bot and it has to be\n       playing or paused\n~'
+                    },
+                    {
+                        name: '`' + prefix + 'autoplay`',
+                        value: 'autoplays similar songs to the song currently playing, when the current song ends\n\n' +
+                        '       **conditions:** you must be in the same voice channel as the bot and it has to be\n       playing or paused\n~'
                     },
                     {
                         name: '`' + prefix + 'end`',
