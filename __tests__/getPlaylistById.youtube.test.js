@@ -10,6 +10,7 @@ const messageMock = {
     send: () => messageMock
 }
 
+jest.setTimeout(10000);
 it('Returns The Correct Number Of Unique Elements Without Erroring', 
 async done => {
     yt.getPlayListsItemsById(list_id, 1, async (error, result) => {

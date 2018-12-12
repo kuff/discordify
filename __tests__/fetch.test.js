@@ -20,7 +20,7 @@ const messageMock = {
     send: () => messageMock
 };
 
-jest.setTimeout(10000);
+jest.setTimeout(30000);
 
 it('Correctly Fetches Single YouTube Videos From Links', 
 async done => {

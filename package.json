@@ -24,6 +24,6 @@
     "ytdl-core": "^0.20.2"
   },
   "devDependencies": {
-    "jest": "^22.4.3"
+    "jest": "^23.6.0"
   }
 }
