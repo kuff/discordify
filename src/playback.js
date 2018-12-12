@@ -97,9 +97,9 @@ module.exports = class Playback {
         })
         .catch(error => {
             console.log('Error in playback stream:', error);
-            this.playing.message.send('the following song did ' +
-                'not play due to copyright restrictions: ' +
-                `"${this.playing.title}" by ${this.playing.artist}.`
+            this.playing.message.send('an error accured while ' +
+                'attempting to play ' + '`' + this.playing.title + '`!'
+                + ' This song might be age restricted or copyright protected!'
                 + (this.queue.size() > 0 
                 ? ' Playing next item in queue...'
                 : ''));
