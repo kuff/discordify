@@ -15,7 +15,7 @@ it('Fetches Videos', async done => {
     done();
 });
 
-jest.setTimeout(10000);
+jest.setTimeout(20000);
 it('Fetches Playlists', async done => {
     const test = search(playlist_query, messageMock);
     const correct = getPlaylistById(
