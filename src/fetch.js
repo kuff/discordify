@@ -1,4 +1,3 @@
-const { self_id } = require('../config.json');
 const youtube = require('./youtube.js');
 const { URL, parse } = require('url');
 const { isUri } = require('valid-url');
@@ -53,7 +52,6 @@ module.exports = class Fetch {
         if (isUri(query)) return await this.getFromUrl(query, 
             message, args);
         return await this.getFromQuery(query, message, args);
-
     }
 
     async getFromUrl(query, message, args) {

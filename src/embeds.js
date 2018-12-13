@@ -79,7 +79,6 @@ module.exports = {
     },
 
     queued: (instance, song, queue_length) => {
-        const client = instance.client;
         const queue = instance.queue;
         const playing = instance.playing;
         const dispatcher = instance.dispatcher
@@ -129,8 +128,7 @@ module.exports = {
                     url: song.thumbnail
                 },
                 author: {
-                    name: `Queued ${songs ? `${songs.length} 
-                        items, including:` : 'an item:'}`
+                    name: `Queued ${songs ? `${songs.length} items, including:` : 'an item:'}`
                 },
                 fields: [
                     {
@@ -256,6 +254,12 @@ module.exports = {
                             '               `next`: inserts requested item(s) at the start of the queue\n' +
                             '               `loop`: loops the requested item(s) until skipped with `' + prefix + 'skip`\n' +
                             '               `autoplay`: automatically queues related songs when the requested item\n       finishes playing and the queue is empty\n' +
+                            '       **conditions:** you must be in a voice channel to use this command and if music is\n       already playing, you must be in the same voice channel as the bot\n~'
+                    },
+                    {
+                        name: '`' + prefix + 'playit`',
+                        value: 'Attempts to parse and play the last message in the text channel where the command is invoked\n\n' +
+                            '       **aliases:** `pi`\n' +
                             '       **conditions:** you must be in a voice channel to use this command and if music is\n       already playing, you must be in the same voice channel as the bot\n~'
                     },
                     {
