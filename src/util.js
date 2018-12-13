@@ -8,7 +8,6 @@ module.exports = {
         const own = await message.send("pinging...");
         return Date.now() - before;
         // Return is only done for testing purposes
-        // return own.edit(ping(client, roundtime));
     },
 
     formatTime: duration => {
@@ -83,6 +82,23 @@ module.exports = {
         catch (error) {
             return false;
         }
+    },
+
+    enqueue: (pb, q, song, message, args, embeds) => {
+        if (!song) return console.log('song: found nothing');
+        console.log('song:', Array.isArray(song)
+            ? `${song.length} items fetched`
+            : `fetched ${song.link}`);
+        // remember the current queue length for use in
+        // queued embed
+        const queue = pb.queueTime();
+        // enqueue fetched song(s)
+        q.enqueue(song, args);
+        // play the first song in queue if nothing is play-
+        // ing, else notify the user that their song request
+        // was queued
+        if (!pb.playing) return pb.play();
+        message.send(embeds.queued(pb, song, queue));
     }
     
 }

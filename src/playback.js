@@ -1,9 +1,7 @@
 'use strict'
 
 const { self_id } = require('../config.json');
-const { 
-    default_volume, audio_passes, message_update_interval
-} = require('../settings.json');
+const { default_volume, audio_passes} = require('../settings.json');
 const { formatTime, setPresence } = require('./util.js');
 const embeds = require('./embeds.js');
 const Message = require('./message.js');
@@ -216,7 +214,7 @@ module.exports = class Playback {
         return formatTime(total);
     }
 
-    /** for version 1.2.0 */
+    /** for version 1.3.0 */
     
     /*
     jump(message, seconds) {

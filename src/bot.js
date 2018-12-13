@@ -1,10 +1,11 @@
 const { token, self_id } = require('../config.json');
 const { prefix } = require('../settings.json');
-const { ping, setPresence, inVoice } = require('./util.js');
+const { ping, setPresence, inVoice, enqueue } = require('./util.js');
 const embeds = require('./embeds.js');
 const Message = require('./message.js');
 const Player = require('./playback.js');
 const Queue = require('./queue.js');
+const { isUri } = require('valid-url');
 const Fetcher = require('./fetch.js');
 const Discord = require('discord.js');
 
@@ -73,28 +74,32 @@ client.on('message', async message => {
                     'playback commands!');
             if (!pb.playing && !message.obj.member.voiceChannel)
                 return message.send('you must be in a voice ' +
-                'channel in order to issue playback commands!');
+                    'channel in order to issue playback commands!');
 
-            // fetch request and return if unsuccessful
             const result = await f.get(params, message);
-            if (!result) return console.log('song: found nothing');
-            console.log('song:', Array.isArray(result)
-                ? `${result.length} items fetched`
-                : `fetched ${result.link}`);
+            enqueue(pb, q, result, message, args, embeds);
+            break;
 
-            // remember the current queue length for use in
-            // queued embed
-            let queue_length = pb.queueTime();
+        case 'playit':
+        case 'pi':
+            if (pb.playing && !inVoice(message.obj.member))
+                return message.send('you must be in the same ' +
+                    'voice channel as me in order to issue ' +
+                    'playback commands!');
+            if (!pb.playing && !message.obj.member.voiceChannel)
+                return message.send('you must be in a voice ' +
+                    'channel in order to issue playback commands!');
 
-            // enqueue fetched song(s)
-            q.enqueue(result, args);
+            const messages = await message.obj.channel.fetchMessages({ limit: 2 });
+            query_message = messages.last();
+            const new_params = query_message.content.trim().split(/ +/g);
+            const url = new_params.find(elem => isUri(elem));
 
-            // play the first song in queue if nothing is play-
-            // ing, else notify the user that their song request
-            // was queued
-            if (!pb.playing) return pb.play();
-            message.send(embeds.queued(pb, result, 
-                queue_length));
+            let fetched;
+            if (url) fetched = await f.get([url], message);
+            else fetched = await f.get(new_params, message);
+
+            enqueue(pb, q, fetched, message, args, embeds);
             break;
 
         case 'pause':
@@ -220,7 +225,7 @@ client.on('message', async message => {
             pb.addFlag('autoplay', message, true);
             break;
 
-        /** for version 1.2.0 */
+        /** for version 1.3.0 */
 
         /*
         case 'recent':

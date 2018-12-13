@@ -1,6 +1,6 @@
 {
   "name": "discordify",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "The last Discord music bot we'll ever need!",
   "main": "./src/bot.js",
   "scripts": {
