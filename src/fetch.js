@@ -58,10 +58,15 @@ module.exports = class Fetch {
         // parse the url and react on relevant hostnames
         const url = parse(query);
         switch (url.hostname) {
+            case 'youtu.be':
             case 'www.youtube.com':
                 // look for relevant link attributes
                 const url = new URL(query);
-                const id = url.searchParams.get('v');
+                var id = url.searchParams.get('v');
+                if (!id) {
+                    id = url.pathname;
+                    if (id) id = id.substr(1);
+                }
                 const list_id = url.searchParams.get('list');
                 if (list_id) {
                     const result = await youtube.getPlaylistById(
