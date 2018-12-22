@@ -1,9 +1,6 @@
-const { youtube_api_key } = require('../config.json');
-const { search, getById, getPlaylistById } = 
+const { getById, getPlaylistById } = 
     require('../src/youtube.js');
 const Fetcher = require('../src/fetch.js');
-const Message = require('../src/message.js');
-const YouTube = require('youtube-node');
 
 const id = '5eZyspecXJE';
 const list_id = 'PLEQoAV22e4i1v8WG1ZzyW6Jmh-P7oaRBB';
@@ -22,10 +19,21 @@ const messageMock = {
 
 jest.setTimeout(30000);
 
-it('Correctly Fetches Single YouTube Videos From Links', 
+it('Correctly Fetches Single YouTube Videos From Typical Links', 
 async done => {
     const test = await f.get(
         [`https://www.youtube.com/watch?v=${id}`], messageMock)
+    const expected = await getById(id);
+    test.message = undefined;
+    expect(JSON.stringify(test))
+        .toEqual(JSON.stringify(expected));
+    done();
+});
+
+it('Correctly Fetches Single YouTube Videos From "Share" Links',
+async done => {
+    const test = await f.get(
+        [`https://youtu.be/${id}`], messageMock)
     const expected = await getById(id);
     test.message = undefined;
     expect(JSON.stringify(test))
