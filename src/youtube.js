@@ -37,7 +37,7 @@ const lib = {
                         formats = prevFormats;
 
                     if (!formats[0]) return reject()
-                    resolve(ytdl(this.link, {
+                    resolve(ytdl.downloadFromInfo(info, {
                         filter: format =>
                             format.itag === formats[0].itag
                     }));
