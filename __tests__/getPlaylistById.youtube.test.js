@@ -1,5 +1,5 @@
 const { youtube_api_key } = require('../config.json');
-const { getById, getPlaylistById } = require('../src/youtube.js');
+const { getPlaylistById } = require('../src/youtube.js');
 const YouTube = require('youtube-node');
 
 list_id = 'PLEQoAV22e4i1v8WG1ZzyW6Jmh-P7oaRBB';
