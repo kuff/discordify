@@ -9,7 +9,7 @@ module.exports = {
             embed: {
                 color: embed_color,
                 footer: {
-                    text: `This bot is running Discordify v${version} (beta)`
+                    text: `This bot is running Discordify v${version}`
                 },
                 fields: [
                     {
@@ -225,7 +225,7 @@ module.exports = {
                 footer: {
                     text: `Sent from #${message.obj.channel.name} 
                         in ${message.obj.guild.name} by Discordify 
-                        v${version} (beta)`
+                        v${version}`
                 },
                 fields: [
                     {
