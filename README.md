@@ -24,8 +24,10 @@ Hold on to this information, as it will become relevant in a minute. Now, for th
     "youtube_api_key": "youtube_api_key_goes_here"
 }
 ```
-7.  After typing in your information and saving the file you should be all set. The bot ships with built in automated tests that can be run with `npm test` - if they pass you should be all set! The test are fairly bandwidth intensive and if they fail due to a timeout it should be an indication that your bandwidth is less than ideal for streaming music through the Discord API.
+7.  After typing in your information and saving the file you should be all set. The bot also ships with built in automated tests that can be run with `npm test` - if they pass you should be all set! The tests are fairly bandwidth intensive and if they fail due to a timeout it should be an indication that your bandwidth is less than ideal for streaming music through the Discord API. I recommend hosting the bot on a machine with a dedicated CPU, as my personal experience is that a vCPU is not enough since audio encoding can be pretty demanding.
 8.  Now, invite the bot to you Discord server by visiting the following link, substituting "BOT_ID_GOES_HERE" with your own bot id: https://discordapp.com/oauth2/authorize?&client_id=BOT_ID_GOES_HERE&scope=bot&permissions=0.
 9.  Finally, spin up the bot with `npm start`. However, for long term program execution you should look into [PM2](http://pm2.keymetrics.io/).
 
 Let me know if you have any trouble or suggestions!
+
+**– kuff**
