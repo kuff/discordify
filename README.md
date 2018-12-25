@@ -1,5 +1,5 @@
 # discordify
-*A single-server focused music bot for Discord.* See the [help command](https://github.com/kuff/discordify/blob/master/FEATURES) for a list of all available commands.
+*A single-server focused music bot for Discord.* See the [help command](https://github.com/kuff/discordify/blob/master/FEATURES.jpg) for a list of all available commands.
 
 ## Installation
 You are of course free to use this software however you like, as per the MIT license. Following is a short tutorial on how to spin up your own instance of the bot.
@@ -47,8 +47,6 @@ Under the main directory there's a **settings.json** file where you can tweak a 
 4.  **default_volume** is the volume used for playback when the bot starts playing. During playback the volume can then be changed with `.volume`, but is then reset once playback ends. You should probably not change this.
 5.  **audio_passes** dictates how many passes the audio encoder takes through the data, before sending it off to the Discord API. This is useful to prevent stutter during playback but will also impact performance on higher values, and as a result should probably not be changed!
 
-See the [help command](https://github.com/kuff/discordify/blob/master/FEATURES) for a list of all available commands.
-
-Let me know if you have any trouble or suggestions!
+See the [help command](https://github.com/kuff/discordify/blob/master/FEATURES.jpg) for a list of all available commands, and let me know if you have any trouble or suggestions!
 
 **– kuff**
