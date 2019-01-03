@@ -38,14 +38,14 @@ Under the main directory there's a **settings.json** file where you can tweak a 
     "embed_color": 923430,
     "memory_size": 5,
     "default_volume": 0.07,
-    "audio_passes": 2
+    "audio_passes": 1
 }
 ````
-1.  The **prefix** is the special character(s) that the bot should react on, meaning the one you put in front of a command keyword when you want the bot to do something specific, e.g. `.play a song`or `.pause`. As a result, I recommend that this be a special character, ensuring the bot is not invoked by mistake!
-2.  The **embed_color** is the color code for the embeds, more specifically the think vertical strip of solid color on the left hand side of the Discord embeds. I recommend keeping this a darker color and have it match the pofile picture of you bot.
-3.  The **memory_size** parameter is how many previously played songs the bot should remember. This is invoked with the `.replay` command and when autoplaying and I do not recommend keeping it shorter than five.
-4.  **default_volume** is the volume used for playback when the bot starts playing. During playback the volume can then be changed with `.volume`, but is then reset once playback ends. You should probably not change this.
-5.  **audio_passes** dictates how many passes the audio encoder takes through the data, before sending it off to the Discord API. This is useful to prevent stutter during playback but will also impact performance on higher values, and as a result should probably not be changed!
+1.  The **prefix** is the special character(s) that the bot should react on, meaning the one you put in front of a command keyword when you want the bot to do something, e.g. `.play a song`or `.pause`. As a result, I recommend that this be a special character, ensuring the bot is not invoked by mistake!
+2.  The **embed_color** is the color code for the embeds, more specifically the vertical strip of solid color on the left hand side of the Discord embeds. I recommend keeping this a darker color and have it match the pofile picture of your bot user.
+3.  The **memory_size** parameter is how many previously played songs the bot should remember. This is invoked with the `.replay` command and when autoplaying, and I do not recommend keeping it shorter than five.
+4.  **default_volume** is the volume used for playback when the bot starts playing. During playback the volume can then be changed with `.volume`, but is then reset once playback ends.
+5.  **audio_passes** dictates how many passes of the data is sent through the the Discord API. This is useful to help mitigate packet loss but will also significantly increase bandwidth usage, and as a result should probably not be changed!
 
 See the [help command](https://github.com/kuff/discordify/blob/master/FEATURES.jpg) for a list of all available commands, and let me know if you have any trouble or suggestions!
 
