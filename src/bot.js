@@ -67,7 +67,7 @@ client.on('message', async message => {
             // handle negative cases...
             if (!params[0]) return message.send('you must ' +
                 'specify something to play, see `' + prefix + 
-                '` for more!');
+                'help` for reference!');
             if (pb.playing && !inVoice(message.obj.member))
                 return message.send('you must be in the same ' +
                     'voice channel as me in order to issue ' +
