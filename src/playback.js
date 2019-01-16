@@ -214,18 +214,4 @@ module.exports = class Playback {
         return formatTime(total);
     }
 
-    /** for version 1.3.0 */
-    
-    /*
-    jump(message, seconds) {
-        // ...
-    }
-    */
-
-    /*
-    jumpTo(message, seconds) {
-        // ...
-    }
-    */
-
 }
