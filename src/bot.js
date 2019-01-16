@@ -225,32 +225,6 @@ client.on('message', async message => {
             pb.addFlag('autoplay', message, true);
             break;
 
-        /** for version 1.3.0 */
-
-        /*
-        case 'recent':
-        case 'history':
-        case 'previous':
-        case 'prev':
-            // the last five songs played are...
-            break;
-        */
-
-        /*
-        case 'jump':
-        case 'j':
-            // jump a specific amount of seconds relative to
-            // the progress of the song currently playing...
-            break;
-        */
-
-        /*
-        case 'jumpto':
-        case 'jt':
-            // jump independently of song progress...
-            break;
-        */
-
     }
 
 });
