@@ -18,8 +18,20 @@ it('Recognizes Setting', () => {
     console.log('audio_passes:', settings.audio_passes);
 });
 
-/*
 it('Is Given Settings Variables With Acceptable Values', () => {
-    // ...
+    // memory_size must be an integer between 2 and 47
+    expect(Number.isInteger(settings.memory_size))
+        .toBeTruthy();
+    expect(settings.memory_size)
+        .not.toBeLessThan(2);
+    expect(settings.memory_size)
+        .not.toBeGreaterThan(47);
+    // expect default_volume to be a number
+    expect(settings.default_volume)
+        .not.toBeNaN();
+    // audio_passes must be an integer greater than 0
+    expect(Number.isInteger(settings.memory_size))
+        .toBeTruthy();
+    expect(settings.audio_passes)
+        .not.toBeLessThan(1);
 });
-*/
