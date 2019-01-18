@@ -33,7 +33,6 @@ module.exports = {
     },
 
     playing: instance => {
-        const client = instance.client;
         const song = instance.playing;
         const queue = instance.queue;
         const duration = song.duration == 0 ? '∞' : 
