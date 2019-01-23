@@ -69,11 +69,21 @@ module.exports = class Fetch {
                 }
                 const list_id = url.searchParams.get('list');
                 if (list_id) {
+                    // attempt to fetch video playlist if a 
+                    // playlist id is given
                     const result = await youtube.getPlaylistById(
                         list_id, message);
-                    if (result.length > 0)
+                    if (result && result.length > 0)
+                        // if successful, add the playlist id to
+                        // the video urls for reference when clicked
                         result.forEach(elem =>
                             elem.link += `&list=${list_id}`);
+                    if (!result && id) {
+                        // if playlist fetch fails and a video id is
+                        // available, attempt to fetch that instead
+                        await message.send('attempting different parse...');
+                        return await youtube.getById(id, message);
+                    }
                     return result;
                 }
                 else if (id) {
