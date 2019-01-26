@@ -10,7 +10,7 @@ module.exports = class Message {
     }
 
     async send(message) {
-        if (this.obj.author.id == self_id) {
+        if (this.obj.author.id === self_id) {
             if (message.embed) {
                 this.obj = await this.obj
                     .edit(message);
@@ -34,7 +34,7 @@ module.exports = class Message {
         if (message.embed) {
             this.obj = await channel.send(message);
         } else {
-            if (this.author.id == self_id) this.obj = await channel
+            if (this.author.id === self_id) this.obj = await channel
                 .send(message);
             else this.obj = await channel.send(this.author + ', ' +
                 message);
