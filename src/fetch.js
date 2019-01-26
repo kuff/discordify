@@ -9,7 +9,8 @@ module.exports = class Fetch {
     }                    // order in which requests are processed
 
     async get(query, message, args) {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async resolve => {
+
             let query_string = '';
             query.map(elem => query_string += elem + ',');
             query = query_string.slice(0, query_string.length - 1);
@@ -23,10 +24,11 @@ module.exports = class Fetch {
             this.queue.push(this.search(query, message, args));
             // await fetching and tell the user if nothing was found
             const process = this.queue[this.queue.length - 1];
+
             process.then(async output => {
                 if (process === this.queue[this.queue.length - 1]) 
                     this.queue = [];
-                if (!output || output.length == 0) {
+                if (!output || output.length === 0) {
                     await message.send('found nothing!');
                     return resolve(undefined);
                 }
@@ -39,30 +41,34 @@ module.exports = class Fetch {
                 await message.send(error);
                 return resolve(undefined);
             });
+
         });
     }
 
     async search(query, message, args) {
+
         // wait for previous processes in the queue to finish
         if (this.queue.length > 0)
             await this.queue[this.queue.length - 1];
         // inform the user that their request is now being processed
         await message.send('processing...');
         // begin appropriate fetching procedure
+
         if (isUri(query)) return await this.getFromUrl(query, 
             message, args);
         return await this.getFromQuery(query, message, args);
+
     }
 
     async getFromUrl(query, message, args) {
         // parse the url and react on relevant hostnames
-        const url = parse(query);
-        switch (url.hostname) {
+        switch (parse(query).hostname) {
+
             case 'youtu.be':
             case 'www.youtube.com':
                 // look for relevant link attributes
                 const url = new URL(query);
-                var id = url.searchParams.get('v');
+                let id = url.searchParams.get('v');
                 if (!id) {
                     id = url.pathname;
                     if (id) id = id.substr(1);
@@ -90,6 +96,7 @@ module.exports = class Fetch {
                     return await youtube.getById(id, message);
                 }
                 break;
+
             // for future sources...
         }
         return undefined; // found nothing, returning undefined

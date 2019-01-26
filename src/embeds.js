@@ -35,7 +35,7 @@ module.exports = {
     playing: instance => {
         const song = instance.playing;
         const queue = instance.queue;
-        const duration = song.duration == 0 ? '∞' : 
+        const duration = song.duration === 0 ? '∞' :
             formatTime(song.duration);
 
         // generate embed
@@ -66,13 +66,13 @@ module.exports = {
                 name: "Up next",
                 value: "*" + next.title + "*\n" + 
                     "by *" + next.artist + "*"
-            }
+            };
             embed.embed.footer.text += 
                 ` • ${queue.size()} item${
                     queue.size() > 1 ? 's' : ''
                 } in queue • ${instance.queueTime()} queue time`;
         }
-        if (song.flags.indexOf('loop') != -1) embed.embed.author
+        if (song.flags.indexOf('loop') !== -1) embed.embed.author
             .name += ' (looping)';
         return embed;
     },
@@ -86,11 +86,11 @@ module.exports = {
         const remaining = formatTime(playing.duration - 
             (Math.round(dispatcher.time / 1000)));
         
-        let duration
+        let duration;
         let songs;
         if (Array.isArray(song)) {
             songs = song;
-            song = songs[0]
+            song = songs[0];
             duration = instance.queueTime(songs);
         }
         else duration = formatTime(song.duration);
@@ -132,7 +132,7 @@ module.exports = {
                 fields: [
                     {
                         name: "Duration",
-                        value: "`" + (song.duration == 0
+                        value: "`" + (song.duration === 0
                             ? "∞"
                             : duration
                         ) + "`",
@@ -183,7 +183,7 @@ module.exports = {
                     },
                     {
                         name: "Remaining",
-                        value: "`" + (playing.duration == 0
+                        value: "`" + (playing.duration === 0
                             ? "∞"
                             : formatTime(Math.round(playing
                                 .duration - dispatcher.time / 1000))
@@ -200,7 +200,7 @@ module.exports = {
                 name: "Up next",
                 value: "*" + next.title + "*\n" +
                     "by *" + next.artist + "*"
-            }
+            };
             embed.embed.footer.text =
                 `Suggested by ${playing.message.author.username} • 
                 ${queue.size()} item${queue.size() > 1 ? 's' : ''} 
@@ -312,4 +312,4 @@ module.exports = {
         }
     }
     
-}
+};

@@ -5,7 +5,7 @@ module.exports = {
 
     ping: async message => {
         const before = Date.now();
-        const own = await message.send("pinging...");
+        await message.send("pinging...");
         return Date.now() - before;
         // Return is only done for testing purposes
     },
@@ -16,7 +16,7 @@ module.exports = {
         const hours = Math.floor(minutes / 60);
         return (hours > 0 ? hours + ":" : "")
             + (minutes % 60 < 10 ?
-                (hours == 0 ? "" : "0") : "")
+                (hours === 0 ? "" : "0") : "")
             + minutes % 60 + ":"
                 + (seconds < 10 ? "0" : "")
                 + seconds;
@@ -25,12 +25,11 @@ module.exports = {
     formatPlays: views => {
         if (views < 1000) return views.toString();
 
-        const views_number = views;
-        const views_string = views_number.toString();
+        const views_string = views.toString();
         let output = '';
 
-        for (i = 0; 3 + i <= views_string.length;) {
-            if (i > 0 || views_string.length % 3 == 0) {
+        for (let i = 0; 3 + i <= views_string.length;) {
+            if (i > 0 || views_string.length % 3 === 0) {
                 output += views_string.slice(i, 3 + i);
                 i += 3;
             }
@@ -64,7 +63,7 @@ module.exports = {
             game: {
                 name: `at ${instance.setVolume()}% volume`
             }
-        })
+        });
         instance.client.user.setPresence({
             status: 'idle',
             game: {
@@ -101,4 +100,4 @@ module.exports = {
         message.send(embeds.queued(pb, song, queue));
     }
     
-}
+};

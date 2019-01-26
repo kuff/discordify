@@ -22,21 +22,21 @@ const lib = {
                 ytdl.getInfo(this.link).then(info => {
                     let formats = ytdl.filterFormats(info.formats,
                         'audioonly');
-                    if (this.duration == 0)
+                    if (this.duration === 0)
                         formats = ytdl.filterFormats(info.formats, format =>
                             format.itag > 90 && format.itag < 96);
                     let prevFormats = formats;
                     formats = ytdl.filterFormats(info.formats, format =>
-                        format.audioBitrate == bitrate);
-                    if (formats.length == 0)
+                        format.audioBitrate === bitrate);
+                    if (formats.length === 0)
                         formats = prevFormats;
                     else prevFormats = formats;
                     formats = ytdl.filterFormats(info.formats, format =>
                         format.audioEncoding === 'opus');
-                    if (formats.length == 0)
+                    if (formats.length === 0)
                         formats = prevFormats;
 
-                    if (!formats[0]) return reject()
+                    if (!formats[0]) return reject();
                     resolve(ytdl.downloadFromInfo(info, {
                         filter: format =>
                             format.itag === formats[0].itag
@@ -60,9 +60,9 @@ const lib = {
                     history = history.map(elem => elem.id);
                     let remaining = result.items.reduce(
                     (array, elem) => {
-                        if (array.length == 3) return array;
+                        if (array.length === 3) return array;
                         const id = elem.id.videoId;
-                        if (history.indexOf(id) != -1)
+                        if (history.indexOf(id) !== -1)
                             return array;
                         array.push(id);
                         return array;
@@ -84,10 +84,10 @@ const lib = {
      * Populate a YouTube Song object with fields fetched from id(s)
      * @param {String || Array<String>} id
      * @param {Object} message
-     * @returns {YouTubeSong || undefined}
+     * @returns {Promise<YouTubeSong>}
      */
     getById: (id, message) =>
-        new Promise((resolve, reject) => {
+        new Promise(resolve => {
             // ...
             if(Array.isArray(id)) id = id.join(',');
             yt.getById(id, (error, result) => {
@@ -99,7 +99,7 @@ const lib = {
                 // return undefined if response object is faulty in 
                 // any way
                 if (!result || !result.items ||
-                result.items.length == 0) {
+                result.items.length === 0) {
                     return resolve(undefined);
                 }
                 const output = result.items.map(elem => 
@@ -120,7 +120,7 @@ const lib = {
                             .asSeconds(),
                     })
                 );
-                if (output.length == 1) return resolve(output[0])
+                if (output.length === 1) return resolve(output[0]);
                 return resolve(output);
             });
         })
@@ -135,7 +135,7 @@ const lib = {
             while (pageToken) {
 
                 const items = await new Promise(async (resolve, reject) => 
-                {
+
                     await axios.get('https://www.googleapis.com/' +
                     'youtube/v3/playlistItems' +
                     `?key=${youtube_api_key}` +
@@ -151,16 +151,16 @@ const lib = {
                         i++;
 
                         if (!result || !result.items ||
-                        result.items.length == 0) {
+                        result.items.length === 0) {
                             await message.send('an error occured!');
                             return resolve(undefined);
                         }
 
-                        const ids = result.items.map(elem => 
+                        const ids = result.items.map(elem =>
                             elem.snippet.resourceId.videoId);
                         const videos = lib.getById(ids, message);
 
-                        if (pageToken && result.nextPageToken != 
+                        if (pageToken && result.nextPageToken !==
                         pageToken) {
                             pageToken = result.nextPageToken;
                         } else {
@@ -170,11 +170,11 @@ const lib = {
                         resolve(await videos);
 
                     })
-                    .catch(() => resolve(undefined));
-                });
+                    .catch(() => resolve(undefined))
+                );
 
                 if (!items) {
-                    await message.send('an error occured!');
+                    await message.send('an error occurred!');
                     return resolve(undefined);
                 }
                 const percent = Math.round(
@@ -190,21 +190,25 @@ const lib = {
 
     search: async (query, message) => 
         new Promise(async (resolve, reject) => {
-            yt.search(query, 1, { 'type': 'video,playlist' }, 
+
+            yt.search(query, 1, { 'type': 'video,playlist' },
             async (error, result) => {
+
                 //result.items.forEach(elem => console.log(elem.snippet.title))
                 if (error) {
                     message.send(error);
                     return resolve(undefined);
                 }
-                if (result.items.length == 0)
+
+                if (result.items.length === 0)
                     return resolve(undefined);
-                const id = result.items[0].id
+                const id = result.items[0].id;
                 if (id.kind === 'youtube#video') {
                     return resolve(await lib.getById(id.videoId, 
                         message));
                 }
                 else {
+
                     const output = await lib.getPlaylistById(
                         id.playlistId, message);
                     // add list_ids to song links
@@ -212,10 +216,13 @@ const lib = {
                         `&list=${id.playlistId}`);
                     // finally, return the result
                     resolve(output);
+
                 }
+
             });
+
         })
 
-}
+};
 
 module.exports = lib;

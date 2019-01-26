@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const { self_id } = require('../config.json');
 const { default_volume, audio_passes} = require('../settings.json');
@@ -29,7 +29,7 @@ module.exports = class Playback {
         this.playing = song;
 
         if (!this.connection) {
-            const user = song.message.author
+            const user = song.message.author;
             const voiceChannel = user.lastMessage.member
                 .voiceChannel;
             if (!voiceChannel) {
@@ -58,7 +58,7 @@ module.exports = class Playback {
     
             this.dispatcher.on('start', async () => {
                 console.log('Now playing:', song.link);
-                if (!first && song.message.author.id != self_id) 
+                if (!first && song.message.author.id !== self_id)
                     await song.message.sendNew(embeds.playing(this));
                 else await song.message.send(embeds.playing(this));
                 setPresence(this);
@@ -71,25 +71,27 @@ module.exports = class Playback {
     
                 // logic for autoplaying message
                 const prev = this.queue.peek(this.queue.history);
-                if (prev && this.queue.size() == 0 && prev.flags
-                .indexOf('autoplay') != -1) {
-                    if ((prev.flags.indexOf('loop') != -1 &&
+                if (prev && this.queue.size() === 0 && prev.flags
+                .indexOf('autoplay') !== -1) {
+                    if ((prev.flags.indexOf('loop') !== -1 &&
                     reason === 'user') || prev.flags
-                    .indexOf('loop') == -1) {
+                    .indexOf('loop') === -1) {
                         await prev.message.sendNew('autoplaying...');
                         prev.message = new Message(prev.message.obj);
                     }
                 }
     
                 this.dispatcher = null;
-                this.play(reason === 'user');
+                this.play(reason === 'user')
+                    .catch(error => song.message.send('an error occurred'
+                        + ' while attempting to initiate playback: ' + error));
                 console.log('Dispatcher ended by:', reason);
             });
     
             this.dispatcher.on('error', async error => {
                 this.guard = this.play;
                 await this.playing.message.sendNew(
-                    `An error occured during playback: ${error}`);
+                    `An error occurred during playback: ${error}`);
                 this.dispatcher.end();
             });
         })
@@ -101,7 +103,9 @@ module.exports = class Playback {
                 + (this.queue.size() > 0 
                 ? ' Playing next item in queue...'
                 : ''));
-            this.play(true);
+            this.play(true)
+                .catch(error => song.message.send('an error occurred'
+                    + ' while attempting to initiate playback: ' + error));
         });
         
     }
@@ -117,6 +121,7 @@ module.exports = class Playback {
     }
     
     async skip(message) {
+
         this.guard = this.skip;
 
         //this.playing.message.delete();
@@ -127,10 +132,13 @@ module.exports = class Playback {
             this.queue.queue[0].message.obj = message.obj;
         }
         this.dispatcher.end();
+
     }
 
     async replay(message, args) {
+
         let item = this.queue.history.pop();
+
         if (this.playing) {
             if (this.dispatcher.time < 6000) {
                 await message.send('replaying previous item...');
@@ -145,14 +153,20 @@ module.exports = class Playback {
         args.push('next');
         this.queue.enqueue(item, args);
         this.queue.queue[0].message = message;
-        if (this.playing) this.skip();
-        else this.play();
+
+        if (this.playing) this.skip()
+            .catch(error => message.send('an error occurred'
+                + ' while skipping tracks: ' + error));
+        else this.play()
+            .catch(error => message.send('an error occurred'
+                + ' while attempting to initiate playback: ' + error));
+
     }
 
     addFlag(flag, message, apply_on_queue = false) {
         const item = this.queue.history[this.queue.history
             .length - 1];
-        if (item.flags.indexOf(flag) != -1) return message.send(
+        if (item.flags.indexOf(flag) !== -1) return message.send(
             'item already has the `' + flag + '` attribute!');
         if (apply_on_queue) this.queue.queue.forEach(elem => 
             elem.flags.push(flag));
@@ -162,7 +176,7 @@ module.exports = class Playback {
     }
 
     setVolume(message, val) {
-        if (val == this.volume) return;
+        if (val === this.volume) return;
         if (!val) {
             const vol = Math.round((this.volume / 
                 (default_volume * 4)) * 100);
@@ -192,26 +206,31 @@ module.exports = class Playback {
     }
 
     queueTime(queue = this.queue.queue) {
+
         if (!this.playing) return '0:00';
+
         // add up total queue time
         let containsLivestream = queue === this.queue.queue ? 
-            this.playing.duration == 0 : false;
+            this.playing.duration === 0 : false;
         let total = queue.reduce((time, elem) => { // use arr.sum()?
             if (!elem) return 0;
-            if (elem.duration == 0) containsLivestream = true;
+            if (elem.duration === 0) containsLivestream = true;
             return time += elem.duration;
         }, 0);
+
         // add remaining duration of song currently playing
         if (this.dispatcher && queue === this.queue.queue) {
             const time = this.dispatcher.time;
-            if (this.playing.duration == 0 || this.playing.flags
-            .indexOf('loop') != -1) return '∞';
+            if (this.playing.duration === 0 || this.playing.flags
+            .indexOf('loop') !== -1) return '∞';
             total += Math.round(this.playing.duration -
                 (time / 1000));
         }
+
         // finally, return result
         if (containsLivestream) return '∞';
         return formatTime(total);
+
     }
 
 }

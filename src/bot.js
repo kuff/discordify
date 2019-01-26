@@ -37,7 +37,7 @@ client.on('message', async message => {
         }
         return prev;
     }, []);
-    params = params.filter(elem => elem != undefined);
+    params = params.filter(elem => elem !== undefined);
 
     // Figure out a way to catch flags...
     message = new Message(message);
@@ -91,7 +91,7 @@ client.on('message', async message => {
                     'channel in order to issue playback commands!');
 
             const messages = await message.obj.channel.fetchMessages({ limit: 2 });
-            query_message = messages.last();
+            const query_message = messages.last();
             const new_params = query_message.content.trim().split(/ +/g);
             const url = new_params.find(elem => isUri(elem));
 
@@ -130,7 +130,9 @@ client.on('message', async message => {
             if (pb.guard)
                 return message.send('another playback command is ' +
                     'being executed!');
-            pb.resume();
+            pb.resume()
+                .catch(error => message.send('an error '
+                    + 'occurred during "resume": ' + error));
             break;
 
         case 'skip':
@@ -143,7 +145,9 @@ client.on('message', async message => {
             if (pb.guard)
                 return message.send('another playback command is ' +
                     'being executed!');
-            pb.skip(message);
+            pb.skip(message)
+                .catch(error => message.send('an error '
+                    + 'occurred during "skip": ' + error));
             break;
 
         case 'volume':
@@ -156,7 +160,7 @@ client.on('message', async message => {
             let val = params[0];
             if (val && isNaN(val)) return message.send('provided' +
                 ' value must be a number!');
-            val = parseInt(val)
+            val = parseInt(val);
             if (val && (!Number.isInteger(val) ||
                 (val < 1 || val > 100)))
                 return message.send('provided value must be ' +
@@ -198,7 +202,9 @@ client.on('message', async message => {
             if (pb.guard)
                 return message.send('another playback command is ' +
                     'being executed!');
-            pb.replay(message, args);
+            pb.replay(message, args)
+                .catch(error => message.send('an error '
+                    + 'occurred during "replay": ' + error));
             break;
         
         case 'loop':
@@ -231,14 +237,14 @@ client.on('message', async message => {
 
 client.on('voiceStateUpdate', member => {
 
-    if (member.voiceChannel != undefined) {
+    if (member.voiceChannel !== undefined) {
         // get all connected members
         let members = member.voiceChannel.members;
         // ignore bot members
         members = members.filter(elem => !elem.user.bot || 
             elem.id === self_id);
         // disconnect from voice chat if no one's listening
-        if (pb.playing && members.size == 1 && inVoice(member)) {
+        if (pb.playing && members.size === 1 && inVoice(member)) {
             pb.terminate();
         }
     }
@@ -256,7 +262,7 @@ client.login(token).then(() => { // sign in as bot user
         // disconnect from the voice channel
         voiceChannel.join().then(connection => 
             connection.disconnect());
-        // find suitible text channels, to inform the user(s) 
+        // find suitable text channels, to inform the user(s)
         // through, meaning text channels where the bot has read-
         // and write permissions
         const textChannels = guild.channels
