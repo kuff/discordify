@@ -69,3 +69,10 @@ it('Handles Multiple Ids', async done => {
         done();
     });
 })
+
+it('Returns Indefined When Given YouTube Playlist Id', async done => {
+    const test = await getById('RDQM0Wxd--weE3k');
+    expect(test)
+        .toEqual(undefined);
+    done();
+});
