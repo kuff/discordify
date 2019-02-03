@@ -78,17 +78,11 @@ const lib = {
                 });
             });
         }
+
     },
 
-    /**
-     * Populate a YouTube Song object with fields fetched from id(s)
-     * @param {String || Array<String>} id
-     * @param {Object} message
-     * @returns {Promise<YouTubeSong>}
-     */
     getById: (id, message) =>
         new Promise(resolve => {
-            // ...
             if(Array.isArray(id)) id = id.join(',');
             yt.getById(id, (error, result) => {
                 // return undefined if the request failed
