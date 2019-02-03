@@ -65,3 +65,10 @@ async done => {
         .toEqual(undefined);
     done();
 });
+
+it('Returns Undefined When Given Single Video Id', async done => {
+    const list_id = 'wXpGzU2nvY';
+    expect(await getPlaylistById(list_id, messageMock))
+        .toEqual(undefined);
+    done();
+});
