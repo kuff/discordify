@@ -58,7 +58,7 @@ async done => {
     done();
 });
 
-it('Returns Undefined When Provided Playlist With Zero Entries',
+it('Returns Undefined When Given Playlist With Zero Entries',
 async done => {
     const list_id = 'PLxQTcoJgTJsRHp266JneGvgYQmD3uty0z';
     expect(await getPlaylistById(list_id, messageMock))

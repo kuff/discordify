@@ -17,11 +17,12 @@
     "axios": "^0.18.0",
     "bufferutil": "^3.0.4",
     "erlpack": "github:hammerandchisel/erlpack",
+    "hawk": "^7.0.10",
     "libsodium-wrappers": "^0.7.3",
     "moment": "^2.22.0",
     "valid-url": "^1.0.9",
     "youtube-node": "^1.3.2",
-    "ytdl-core": "^0.20.2"
+    "ytdl-core": "^0.29.1"
   },
   "devDependencies": {
     "jest": "^23.6.0"
