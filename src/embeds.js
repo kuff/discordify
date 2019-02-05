@@ -107,7 +107,7 @@ module.exports = {
 
         if (dispatcher.paused) queue_length += ' (paused)';
         else if (queue_size > 1) queue_length += ` (${queue_size
-            } items)`;
+            } entries)`;
 
         // generate embed
         return embed = {
@@ -127,7 +127,7 @@ module.exports = {
                     url: song.thumbnail
                 },
                 author: {
-                    name: `Queued ${songs ? `${songs.length} items, including:` : 'an item:'}`
+                    name: `Queued ${songs ? `${songs.length} entries, including:` : 'an item:'}`
                 },
                 fields: [
                     {
