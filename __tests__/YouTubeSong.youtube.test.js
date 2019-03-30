@@ -2,6 +2,7 @@ const { youtube_api_key } = require('../config.json');
 const { memory_size } = require('../settings.json');
 const { Song, getById } = require('../src/youtube.js');
 const YouTube = require('youtube-node');
+const stream = require('stream');
 
 const YouTubeSong = Song;
 
@@ -35,8 +36,15 @@ it('Initializes', () => {
         .toEqual(input);
 });
 
-it('Plays', () => {
-    // I have no idea how to test this...
+it('Plays', async done => {
+    const song = new YouTubeSong(input);
+    const song_stream = await song.play();
+    expect(song_stream)
+        .toBeInstanceOf(stream.Readable);
+    song_stream.on('data', chunk => {
+        expect(chunk.length).toBeGreaterThan(0);
+        done();
+    });
 });
 
 it('Does Related Search With No History', done => {
