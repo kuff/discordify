@@ -30,7 +30,6 @@ client.on('message', async message => {
     const command = params.shift().toLowerCase()
         .slice(prefix.length);
     const args = params.reduce((prev, elem, i) => {
-        // this can probably be improved
         if (elem.startsWith('--')) {
             prev.push(elem.slice(2));
             params[i] = undefined;
@@ -39,7 +38,6 @@ client.on('message', async message => {
     }, []);
     params = params.filter(elem => elem !== undefined);
 
-    // Figure out a way to catch flags...
     message = new Message(message);
 
     console.log('command:', command);

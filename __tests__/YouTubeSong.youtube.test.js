@@ -36,7 +36,7 @@ it('Initializes', () => {
 });
 
 it('Plays', () => {
-    // I have no idea how to test this btw...
+    // I have no idea how to test this...
 });
 
 it('Does Related Search With No History', done => {
@@ -65,7 +65,7 @@ it('Does Related Search With Self In History', done => {
     })
 });
 
-it('Ignores Non Matching Ids While Doing Related Search', done => {
+it('Ignores Non-Matching Ids While Doing Related Search', done => {
     const song = new YouTubeSong(input);
     song.related(
         [
@@ -125,7 +125,3 @@ it('Does Related Search With Long Memory Of Related Songs', done => {
         done();
     })
 });
-
-/*it('Randomizes Related Search Output (Probably)', done => {
-    // ...
-});*/

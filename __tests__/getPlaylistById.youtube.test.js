@@ -11,7 +11,7 @@ const messageMock = {
 
 jest.setTimeout(10000);
 
-it('Return Playlists With Less Than 50 Entries', async done => {
+it('Returns Playlists With Less Than 50 Entries', async done => {
     const list_id = 'PLxQTcoJgTJsQ3DZUj6isaGuwGOY3Xp-p_'; // 16 entries at the time of writing
     yt.getPlayListsItemsById(list_id, 1, async (error, result) => {
 
@@ -31,7 +31,7 @@ it('Return Playlists With Less Than 50 Entries', async done => {
     done();
 });
 
-it('Return Playlists With More Than 50 Entries', async done => {
+it('Returns Playlists With More Than 50 Entries', async done => {
     const list_id = 'PLGdEbnOoiEOOaFFYKh3A66wOUlrHUwzTs'; // 191 entries at the time of writing
     yt.getPlayListsItemsById(list_id, 1, async (error, result) => {
 

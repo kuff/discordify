@@ -1,4 +1,4 @@
-module.exports = class Song {
+module.exports = /*abstract*/ class Song {
     
     constructor(args) {
         this.link = args.link;
