@@ -50,10 +50,10 @@ module.exports = class Fetch {
         // wait for previous processes in the queue to finish
         if (this.queue.length > 0)
             await this.queue[this.queue.length - 1];
+
         // inform the user that their request is now being processed
         await message.send('processing...');
         // begin appropriate fetching procedure
-
         if (isUri(query)) return await this.getFromUrl(query, 
             message, args);
         return await this.getFromQuery(query, message, args);
@@ -97,7 +97,7 @@ module.exports = class Fetch {
                 }
                 break;
 
-            // for future sources...
+            // for future audio sources...
         }
         return undefined; // found nothing, returning undefined
     }

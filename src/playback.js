@@ -3,16 +3,16 @@
 const { self_id } = require('../config.json');
 const { default_volume, audio_passes} = require('../settings.json');
 const { formatTime, setPresence } = require('./util.js');
-const embeds = require('./embeds.js');
+const embeds = require('./embeds.js'); // for embedding information into Discord messages
 const Message = require('./message.js');
 
 module.exports = class Playback {
     
     constructor(client, queue) {
-        this.client = client;
-        this.queue = queue;
+        this.client = client; // Discord client
+        this.queue = queue; // song queue object
         this.playing = undefined; // should contain song when playing
-        this.volume = default_volume;
+        this.volume = default_volume; // playback volume
         this.guard = undefined; // the method guard
     }
 
@@ -21,11 +21,12 @@ module.exports = class Playback {
 
         const song = await this.queue.dequeue(skipped);
         if (!song) {
+            // if no song is retrieved, terminate playback
             //if (!skipped) this.playing.message.delete();
             return this.terminate();
         }
         
-        const first = skipped ? true : this.playing === undefined;
+        const first = skipped ? true : this.playing === undefined; 
         this.playing = song;
 
         if (!this.connection) {
@@ -34,8 +35,7 @@ module.exports = class Playback {
                 .voiceChannel;
             if (!voiceChannel) {
                 song.message.send('your request will not be played' +
-                    ' because you disconnected from the voice ' +
-                    'channel!');
+                    ' because you disconnected from the voice channel!');
                 this.playing = undefined;
                 this.queue.clear();
                 this.guard = null;
@@ -73,9 +73,9 @@ module.exports = class Playback {
                 const prev = this.queue.peek(this.queue.history);
                 if (prev && this.queue.size() === 0 && prev.flags
                 .indexOf('autoplay') !== -1) {
-                    if ((prev.flags.indexOf('loop') !== -1 &&
-                    reason === 'user') || prev.flags
-                    .indexOf('loop') === -1) {
+                    if ((prev.flags.indexOf('loop') !== -1 
+                    && reason === 'user')
+                    || prev.flags.indexOf('loop') === -1) {
                         await prev.message.sendNew('autoplaying...');
                         prev.message = new Message(prev.message.obj);
                     }
@@ -190,6 +190,7 @@ module.exports = class Playback {
     }
 
     terminate() {
+        // perform various cleanup tasks
         this.playing = undefined;
         this.connection.disconnect();
         this.connection = null;

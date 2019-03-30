@@ -7,11 +7,10 @@ module.exports = {
         const before = Date.now();
         await message.send("pinging...");
         return Date.now() - before;
-        // Return is only done for testing purposes
     },
 
     formatTime: duration => {
-        const seconds = duration % 60; // Leftover seconds
+        const seconds = duration % 60;
         const minutes = Math.floor(duration / 60);
         const hours = Math.floor(minutes / 60);
         return (hours > 0 ? hours + ":" : "")
