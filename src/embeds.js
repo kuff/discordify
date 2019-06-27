@@ -68,7 +68,7 @@ module.exports = {
                     "by *" + next.artist + "*"
             };
             embed.embed.footer.text += 
-                ` • ${queue.size()} item${
+                ` • ${queue.size()} entries${
                     queue.size() > 1 ? 's' : ''
                 } in queue • ${instance.queueTime()} queue time`;
         }
@@ -127,7 +127,7 @@ module.exports = {
                     url: song.thumbnail
                 },
                 author: {
-                    name: `Queued ${songs ? `${songs.length} entries, including:` : 'an item:'}`
+                    name: `Queued ${songs ? `${songs.length} entries, including:` : 'an entry:'}`
                 },
                 fields: [
                     {
@@ -203,7 +203,7 @@ module.exports = {
             };
             embed.embed.footer.text =
                 `Suggested by ${playing.message.author.username} • 
-                ${queue.size()} item${queue.size() > 1 ? 's' : ''} 
+                ${queue.size()} entr${queue.size() > 1 ? 'ies' : 'y'} 
                 in queue • ${instance.queueTime()} queue time`;
         }
         return embed;
@@ -250,9 +250,9 @@ module.exports = {
                             '       **supported params:** YouTube video- or playlist links as well as search queries\n' +
                             '       **supported flags: (optional)**\n' +
                             '               `shuffle`: shuffles the requested playlist\n' +
-                            '               `next`: inserts requested item(s) at the start of the queue\n' +
-                            '               `loop`: loops the requested item(s) until skipped with `' + prefix + 'skip`\n' +
-                            '               `autoplay`: automatically queues related songs when the requested item\n       finishes playing and the queue is empty\n' +
+                            '               `next`: inserts requested entry(s) at the start of the queue\n' +
+                            '               `loop`: loops the requested entry(s) until skipped with `' + prefix + 'skip`\n' +
+                            '               `autoplay`: automatically queues related songs when the requested entry\n       finishes playing and the queue is empty\n' +
                             '       **conditions:** you must be in a voice channel to use this command and if music is\n       already playing, you must be in the same voice channel as the bot\n~'
                     },
                     {
@@ -275,7 +275,7 @@ module.exports = {
                     },
                     {
                         name: '`' + prefix + 'skip`',
-                        value: 'Skips the item currently playing\n\n' +
+                        value: 'Skips the entry currently playing\n\n' +
                             '       **aliases:** `next`\n' +
                             '       **conditions:** you must be in the same voice channel as the bot and it has to be\n       playing or paused\n~'
                     },

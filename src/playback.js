@@ -61,8 +61,17 @@ module.exports = class Playback {
                 if (!first && song.message.author.id !== self_id)
                     await song.message.sendNew(embeds.playing(this));
                 else await song.message.send(embeds.playing(this));
-                setPresence(this);
                 this.guard = undefined;
+
+                // set playback volume if integer flag was passed with song request
+                song.flags.forEach(flag => {
+                    const number = parseInt(flag);
+                    if (Number.isInteger(number)) {
+                        this.volume = (number * (default_volume * 4)) / 100;
+                        this.dispatcher.setVolume(this.volume);
+                    }
+                })
+                setPresence(this);
             });
     
             this.dispatcher.on('end', async reason => {
