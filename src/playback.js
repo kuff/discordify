@@ -66,7 +66,7 @@ module.exports = class Playback {
                 // set playback volume if integer flag was passed with song request
                 song.flags.forEach(flag => {
                     const number = parseInt(flag);
-                    if (Number.isInteger(number) && number >= 1 && number <= 100) {
+                    if (Number.isInteger(number)) {
                         this.volume = (number * (default_volume * 4)) / 100;
                         this.dispatcher.setVolume(this.volume);
                     }
