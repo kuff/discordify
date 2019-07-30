@@ -1,5 +1,5 @@
 # discordify
-*A single-server focused music bot for Discord.* See the [help command](https://github.com/kuff/discordify/blob/master/FEATURES.jpg) for a list of all available commands.
+*A single-server focused music bot for Discord.* See the [help command](https://github.com/kuff/discordify/blob/master/FEATURES.jpg) for a list of all available commands or watch the [video](https://www.youtube.com/watch?v=qAYvJtIg1qc)!
 
 ## Installation
 You are of course free to use this software however you like, as per the MIT license. Following is a short tutorial on how to spin up your own instance of the bot.
