@@ -113,13 +113,14 @@ module.exports = class Playback {
       .catch(error => {
         console.log("Error in playback stream:", error);
         this.playing.message.send(
-          "an error occurred while " +
-            "attempting to play " +
+          "The following error occurred while attempting to play: " +
             "`" +
             this.playing.title +
-            "`!" +
-            " This song might be age restricted or copyright protected!" +
-            (this.queue.size() > 0 ? " Playing next item in queue..." : "")
+            "`!\n " +
+            "`" +
+            error +
+            "`" +
+            (this.queue.size() > 0 ? ". Playing next item in queue..." : "")
         );
         this.play(true).catch(error =>
           song.message.send(

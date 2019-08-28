@@ -152,6 +152,7 @@ const lib = {
         return resolve(output);
       });
     }),
+
   /**
    * turn a YouTube playlist id into a list of YouTubeSong objects
    */
@@ -227,6 +228,7 @@ const lib = {
       // return the final output
       return resolve(output);
     }),
+
   /**
    * search the YouTube api for playlists or individual videos based on a query
    */
