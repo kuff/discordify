@@ -12,19 +12,19 @@
   "author": "kuff",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^11.4.2",
-    "node-opus": "^0.2.9",
-    "axios": "^0.18.0",
-    "bufferutil": "^3.0.5",
+    "axios": "0.18.0",
+    "bufferutil": "3.0.5",
+    "discord.js": "11.4.2",
     "erlpack": "github:hammerandchisel/erlpack",
-    "hawk": "^7.0.10",
-    "libsodium-wrappers": "^0.7.4",
-    "moment": "^2.24.0",
-    "valid-url": "^1.0.9",
-    "youtube-node": "^1.3.3",
-    "ytdl-core": "^0.29.1"
+    "hawk": "7.0.10",
+    "libsodium-wrappers": "0.7.4",
+    "moment": "2.24.0",
+    "node-opus": "0.2.9",
+    "valid-url": "1.0.9",
+    "youtube-node": "1.3.3",
+    "ytdl-core": "0.29.5"
   },
   "devDependencies": {
-    "jest": "^23.6.0"
+    "jest": "23.6.0"
   }
 }
