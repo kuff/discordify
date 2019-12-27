@@ -12,7 +12,7 @@
   "author": "kuff",
   "license": "ISC",
   "dependencies": {
-    "axios": "0.18.0",
+    "axios": "0.18.1",
     "bufferutil": "3.0.5",
     "discord.js": "11.4.2",
     "erlpack": "github:hammerandchisel/erlpack",
