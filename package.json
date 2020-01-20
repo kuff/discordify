@@ -22,7 +22,7 @@
     "node-opus": "0.2.9",
     "valid-url": "1.0.9",
     "youtube-node": "1.3.3",
-    "ytdl-core": "0.29.5"
+    "ytdl-core": "1.0.7"
   },
   "devDependencies": {
     "jest": "23.6.0"
