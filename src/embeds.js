@@ -63,8 +63,8 @@ module.exports = {
         name: "Up next",
         value: "*" + next.title + "*\n" + "by *" + next.artist + "*"
       };
-      embed.embed.footer.text += ` • ${queue.size()} entries${
-        queue.size() > 1 ? "s" : ""
+      embed.embed.footer.text += ` • ${queue.size()} entr${
+        queue.size() > 1 ? "ies" : "y"
       } in queue • ${instance.queueTime()} queue time`;
     }
     if (song.flags.indexOf("loop") !== -1)
