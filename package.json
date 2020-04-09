@@ -12,17 +12,17 @@
   "author": "kuff",
   "license": "ISC",
   "dependencies": {
-    "axios": "0.18.1",
-    "bufferutil": "3.0.5",
-    "discord.js": "11.4.2",
-    "erlpack": "github:hammerandchisel/erlpack",
+    "axios": "0.19.2",
+    "bufferutil": "4.0.1",
+    "discord.js": "11.6.4",
+    "erlpack": "0.1.3",
     "hawk": "7.0.10",
-    "libsodium-wrappers": "0.7.4",
+    "libsodium-wrappers": "0.7.6",
     "moment": "2.24.0",
-    "node-opus": "0.2.9",
+    "node-opus": "0.3.3",
     "valid-url": "1.0.9",
     "youtube-node": "1.3.3",
-    "ytdl-core": "1.0.7"
+    "ytdl-core": "2.0.1"
   },
   "devDependencies": {
     "jest": "23.6.0"
