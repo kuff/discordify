@@ -42,7 +42,7 @@ Under the main directory there's a **settings.json** file where you can tweak a 
 }
 ````
 1.  The **prefix** is the special character(s) that the bot should react on, meaning the one you put in front of a command keyword when you want the bot to do something, e.g. `.play a song`or `.pause`. As a result, I recommend that this be a special character, ensuring the bot is not invoked by mistake!
-2.  The **embed_color** is the color code for the embeds, more specifically the vertical strip of solid color on the left hand side of the Discord embeds. I recommend keeping this a darker color and have it match the pofile picture of your bot user.
+2.  The **embed_color** is the color code for the embeds, more specifically the vertical strip of solid color on the left hand side of the Discord embeds. I recommend keeping this a darker color and have it match the pofile picture of your bot user. Select from some of [these](https://gist.github.com/thomasbnt/b6f455e2c7d743b796917fa3c205f812) presets or use [this handy tool](https://leovoel.github.io/embed-visualizer/) to experiment with different embed colors!
 3.  The **memory_size** parameter is how many previously played songs the bot should remember. This is invoked with the `.replay` command and when autoplaying, and I do not recommend keeping it shorter than five.
 4.  **default_volume** is the volume used for playback when the bot starts playing. During playback the volume can then be changed with `.volume`, but is then reset once playback ends.
 5.  **audio_passes** dictates how many passes of the data is sent through the the Discord API. This is useful to help mitigate packet loss but will also significantly increase bandwidth usage, and as a result should probably not be changed!
