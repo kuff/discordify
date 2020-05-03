@@ -48,5 +48,3 @@ Under the main directory there's a **settings.json** file where you can tweak a 
 5.  **audio_passes** dictates how many passes of the data is sent through the the Discord API. This is useful to help mitigate packet loss but will also significantly increase bandwidth usage, and as a result should probably not be changed!
 
 See the [help command](https://github.com/kuff/discordify/blob/master/FEATURES.jpg) for a list of all available commands, and let me know if you have any trouble or suggestions!
-
-**– kuff**
