@@ -229,9 +229,7 @@ module.exports = {
           "available commands, explaining how to use " +
           "them and what they do.",
         footer: {
-          text: `Sent from #${message.obj.channel.name} 
-                        in ${message.obj.guild.name} by Discordify 
-                        v${version}`
+          text: `Sent from #${message.obj.channel.name} in ${message.obj.guild.name} by Discordify v${version}`
         },
         fields: [
           {
@@ -320,7 +318,7 @@ module.exports = {
           {
             name: "`" + prefix + "autoplay`",
             value:
-              "autoplays similar songs to the song currently playing, when the current song ends\n\n" +
+              "autoplays similar songs to the song currently playing when the current song ends and the queue is empty\n\n" +
               "       **conditions:** you must be in the same voice channel as the bot and it has to be\n       playing or paused\n~"
           },
           {
