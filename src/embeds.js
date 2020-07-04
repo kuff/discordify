@@ -291,7 +291,9 @@ module.exports = {
             value:
               "Skips the entry currently playing\n\n" +
               "       **aliases:** `next`\n" +
-              "       **conditions:** you must be in the same voice channel as the bot and it has to be\n       playing or paused\n~"
+              "       **conditions:** you must be in the same voice channel as the bot and it has to be\n       playing or paused\n" +
+              "       **supported flags: (optional)**\n" +
+              "               `all`: skips all entries in a playlist request\n~"
           },
           {
             name: "`" + prefix + "remaining`",

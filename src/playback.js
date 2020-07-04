@@ -140,15 +140,19 @@ module.exports = class Playback {
     this.guard = undefined;
   }
 
-  async skip(message) {
+  async skip(message, args) {
     this.guard = this.skip;
 
     //this.playing.message.delete();
     this.stream.destroy();
 
     if (message && this.queue.size() > 0) {
-      await message.send("skipping...");
-      this.queue.queue[0].message.obj = message.obj;
+
+      if (this.queue.queue.length > 0) {
+        if (args.indexOf("all") !== -1) this.queue.removeAll(this.queue.queue[0].message.obj.id, message);
+        else await message.send("skipping...");
+        if (this.queue.queue.length > 0) this.queue.queue[0].message.obj = message.obj;
+      }
     }
     this.dispatcher.end();
   }

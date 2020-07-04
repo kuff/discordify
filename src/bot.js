@@ -166,7 +166,7 @@ client.on("message", async message => {
         );
       if (pb.guard)
         return message.send("another playback command is " + "being executed!");
-      pb.skip(message).catch(error =>
+      pb.skip(message, args).catch(error =>
         message.send("an error " + 'occurred during "skip": ' + error)
       );
       break;
@@ -300,7 +300,7 @@ client.login(token).then(() => {
     textChannels
       .first()
       .send(
-        "Oops, It would appear " +
+        "Oops, It looks like " +
           "Discordify crashed during playback! (And rebooted " +
           "successfully)"
       );

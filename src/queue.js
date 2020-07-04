@@ -50,6 +50,17 @@ module.exports = class Queue {
     return song;
   }
 
+  removeAll(messageId, message) {
+    const oldQueueSize = this.size();
+
+    // debuggerino
+    this.queue.forEach(elem => console.log("target id: " + messageId + ". entry id: " + elem.message.obj.id));
+
+    this.queue = this.queue.filter(item => item.message.obj.id !== messageId);
+    const itemsSkipped = 1 + oldQueueSize - this.size();
+    message.send(`skipping ${itemsSkipped} entr${itemsSkipped == 1 ? "y" : "ies"}...`);
+  }
+
   peek(list = this.queue) {
     if (list === this.history) {
       return this.history[this.history.length - 1];
