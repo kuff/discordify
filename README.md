@@ -4,9 +4,10 @@
 - View the [help command](https://github.com/kuff/discordify/blob/master/FEATURES.jpg) for a list of all available commands or watch the [showcase video](https://www.youtube.com/watch?v=qAYvJtIg1qc)!
 - Submit a bug report or suggest a new feature with the [issue tracker](https://github.com/kuff/discordify/issues/new/choose)!
 - See also the [Discoinnect virtual currency](https://github.com/kuff/discoinnect)!
+- You are of course free to use this software however you like (almost), as per the [MIT license](https://github.com/kuff/discordify/blob/master/LICENSE).
 
 ## Installation
-You are of course free to use this software however you like, as per the MIT license. Following is a short tutorial on how to spin up your own instance of the bot.
+Following is a short tutorial on how to spin up your own instance of the bot.
 however, in order to run, the bot requires some credentials - more specifically a **Discord bot token** as well as the **id** of the bot user and a **YouTube api key**.
 
 1.  A **Discord bot token** is optained by creating a new app on the [Discord app dashboard](https://discordapp.com/developers/applications) and then registering the app as a Bot User.
