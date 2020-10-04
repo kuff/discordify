@@ -1,5 +1,9 @@
 # discordify
-*A single-server focused music bot for Discord.* See the [help command](https://github.com/kuff/discordify/blob/master/FEATURES.jpg) for a list of all available commands or watch the [video](https://www.youtube.com/watch?v=qAYvJtIg1qc)! See also the [Discoinnect virtual currency](https://github.com/kuff/discoinnect).
+>A single-server focused music bot for Discord.
+
+- View the [help command](https://github.com/kuff/discordify/blob/master/FEATURES.jpg) for a list of all available commands or watch the [showcase video](https://www.youtube.com/watch?v=qAYvJtIg1qc)!
+- Submit a bug report or suggest a new feature with the [issue tracker](https://github.com/kuff/discordify/issues/new/choose)!
+- See also the [Discoinnect virtual currency](https://github.com/kuff/discoinnect)!
 
 ## Installation
 You are of course free to use this software however you like, as per the MIT license. Following is a short tutorial on how to spin up your own instance of the bot.
@@ -13,7 +17,7 @@ Hold on to this information, as it will become relevant in a minute. Now, for th
 
 1.  Start by navigating to a suitable place for the bot source files to be installed.
 2.  Next download the bot source files with `git clone https://github.com/kuff/discordify.git` and enter the directory by typing in `cd discordify`.
-3.  Now, install [FFMPEG](https://www.ffmpeg.org/) with `sudo apt-get install ffmpeg`. This is needed for streaming audio over Discord voice chat.
+3.  Now, install [FFMPEG](https://www.ffmpeg.org/) with `sudo apt-get install ffmpeg`. This is needed for encoding audio for Discord voice chat.
 4.  Next up, install the bot dependencies with `npm i`.
 5.  Now those credentials from earlier come into play. Start by creating a config.json file with `touch config.json` and open it in your favorite text editor.
 6.  Then copy-paste the information gathered earlier, structured the following way:
@@ -47,4 +51,4 @@ Under the main directory there's a **settings.json** file where you can tweak a 
 4.  **default_volume** is the volume used for playback when the bot starts playing. During playback the volume can then be changed with `.volume`, but is then reset once playback ends.
 5.  **audio_passes** dictates how many passes of the data is sent through the the Discord API. This is useful to help mitigate packet loss but will also significantly increase bandwidth usage, and as a result should probably not be changed!
 
-See the [help command](https://github.com/kuff/discordify/blob/master/FEATURES.jpg) for a list of all available commands, and let me know if you have any trouble or suggestions!
+See the [help command](https://github.com/kuff/discordify/blob/master/FEATURES.jpg) for a list of all available commands, and let me know if you have any trouble or suggestions through the [issue tracker](https://github.com/kuff/discordify/issues/new/choose)!
