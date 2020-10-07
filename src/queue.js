@@ -1,4 +1,4 @@
-const { memory_size } = require("../settings.json");
+const { memory_size, always_autoplay } = require("../settings.json");
 const { shuffle } = require("./util.js");
 
 module.exports = class Queue {
@@ -22,6 +22,10 @@ module.exports = class Queue {
         this.clear();
       }
     }
+
+    // always autoplay if configured in settings.json
+    if (always_autoplay && (!args || args.indexOf("autoplay") === -1))
+      song.forEach(elem => elem.flags = ["autoplay"]);  // this might break future flags
 
     song.forEach(elem => this.queue.push(elem));
   }
