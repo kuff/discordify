@@ -1,3 +1,5 @@
+![Screenshot](https://www.dropbox.com/s/rh02l5nav2bq7ie/discordify-15.jpg?dl=0&raw=1)
+
 # discordify
 >A single-server focused music bot for Discord.
 
