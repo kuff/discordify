@@ -79,7 +79,7 @@ client.on("message", async message => {
             "voice channel as me in order to issue " +
             "playback commands!"
         );
-      if (!pb.playing && !message.obj.member.voiceChannel)
+      if (!message.obj.member.voiceChannel)
         return message.send(
           "you must be in a voice " +
             "channel in order to issue playback commands!"
@@ -185,7 +185,7 @@ client.on("message", async message => {
       if (val && isNaN(val))
         return message.send("provided" + " value must be a number!");
       val = parseInt(val);
-      if (val && (!Number.isInteger(val) || (val < 1 || val > 100)))
+      if (val && (!Number.isInteger(val) || val < 1 || val > 100))
         return message.send(
           "provided value must be " + "an integer between 1 and 100!"
         );
