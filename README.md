@@ -12,7 +12,7 @@
 Following is a short tutorial on how to spin up your own instance of the bot.
 however, in order to run, the bot requires some credentials - more specifically a **Discord bot token** as well as the **id** of the bot user and a **YouTube api key**.
 
-1.  A **Discord bot token** is optained by creating a new app on the [Discord app dashboard](https://discordapp.com/developers/applications) and then registering the app as a Bot User.
+1.  A **Discord bot token** is optained by creating a new app on the [Discord app dashboard](https://discordapp.com/developers/applications) and then registering the app as a Bot User. Remember to also subscribe the bot to the various [Privilidged Gateway Intents](https://cdn.discordapp.com/attachments/769862166131245066/770741048577622096/image0.png)!
 2.  The **id** of the bot user can then also be copy-pasted from the Discord app dashboard.
 3.  A **YouTube API v3 key** can be optained for free by logging in to the [Google API Dashboard](https://console.cloud.google.com/apis) and registering a new project. After this, YouTube API v3 can be found under the "Library" tab on the left hand side, where you can choose to generate a new api key.
 
