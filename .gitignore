@@ -3,6 +3,8 @@
 .idea
 node_modules/
 config.json
+production-config.json
+test-config.json
 
 
 # Created by https://www.gitignore.io/api/node,visualstudiocode
